@@ -1,4 +1,4 @@
-function xco = ccrs(x,y,nx,ny)
+function [xco, dtft] = ccrs(x,y,nx,ny)
 % function [rxy,l] = ccrs(x,y,nx,ny)
 
 % Time reverse y 
@@ -59,13 +59,9 @@ for i = 1:yl
 end
 xco = sum(M);
 
-%calculate DTFT
-%don't know if this works
-temp = w' * n;
-temp = -1i * temp;
+%DTFT???
+w=linspace(-3*pi,3*pi,256);
 
-e = exp(temp);
-
-X = e * x';
+dtft= plot(freqz(x,1,w));
 
 end

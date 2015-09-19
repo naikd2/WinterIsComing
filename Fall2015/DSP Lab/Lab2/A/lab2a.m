@@ -58,22 +58,17 @@
 % xlabel('\omega/\pi'); ylabel('Phase, radians');
 
 
-
-
-%x[n] = [1,2,3-,2,1] ;
-%y[n] = [2,1,0-,-1,-2]; 
-
 clear; 
 
+%input values for ccrs
 x = [1 2 3 2 1];
 y = [2 1 0 -1 -2];
-%Time reverse the y matrx
-% flipY = fliplr(y); 
-
 %bounds of x
 nx = [-2 2];
 %bounds of y
 ny = [-2 2];
+
+
 % %length of x
 % xl = abs( nx(1) ) + abs( nx(2) ) + 1
 % %length of y
@@ -81,8 +76,6 @@ ny = [-2 2];
 % 
 % %length of final result
 % l = xl + yl - 1;
-
-ccrs(x,y,nx,ny)
 
 % nxMat = nx(1):1:nx(2)
 % nyMat = ny(1):1:ny(2)
@@ -106,7 +99,6 @@ ccrs(x,y,nx,ny)
 % for c = 1:l
 %     matList(c) = [flipY(c) * x(c)]
 % end
-
 %Sum = sum(matList)
 
 
@@ -129,19 +121,7 @@ ccrs(x,y,nx,ny)
 % M
 % sum(M)
 
+ccrs(x,y,nx,ny)
+
 %Actual Answer using matlab built in function
-xco =  xcorr(x,y)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+% xco =  xcorr(x,y)
