@@ -1,41 +1,5 @@
 function [xco, dtft] = ccrs(x,y,nx,ny)
-% function [rxy,l] = ccrs(x,y,nx,ny)
-
-% Time reverse y 
-
-% flipY = fliplr(y); 
-% 
-% l = length(nx) + length(ny)
-% 
-% s = nx(1);
-% t = nx(length(nx));
-% 
-% 
-% 
-% 
-% for c = 1:2
-%     
-%     for n = s:1:t
-%         
-%         rxy = x(n) * flipY(n)
-%        
-%     end
-%     
-% end
-% 
-% l = length(nx) + length(ny)
-
-
-%kevin's way
-
-% x = [1 2 3 2 1];
-% y = [2 1 0 -1 -2];
-% 
-% %bounds of x
-% nx = [-2 2];
-% %bounds of y
-% ny = [-2 2];
-
+%Kevin's way
 
 %Time reverse the y matrx
 flipY = fliplr(y); 
@@ -48,9 +12,13 @@ yl = abs( ny(1) ) + abs( ny(2) ) + 1;
 %length of final result
 l = xl + yl - 1;
 
+%Create empty matrix to store values in
 M = zeros(yl,l);
+
+%used to properly place values in correct rows and columns
 spacer = 0;
 
+%Convolution by table method
 for i = 1:yl
     for j = 1:xl
         M(i,j+spacer) = [flipY(j) * x(i)];
@@ -59,9 +27,17 @@ for i = 1:yl
 end
 xco = sum(M);
 
-%DTFT???
-w=linspace(-3*pi,3*pi,256);
-
-dtft= plot(freqz(x,1,w));
+%DTFT. Currently only plots 1 period.
+%Maybe figure out how to plot larger range later
+%
+%DTFT method taken from http://blogs.mathworks.com/steve/2010/06/25/plotting-the-dtft-using-the-output-of-fft/
+N = 256;
+X = fft(x, N);
+w = 2*pi * (0:(N-1)) / N;
+w2 = fftshift(w);
+w3 = unwrap(w2 - 2*pi);
+plot(w3/pi, abs(fftshift(X)))
+grid
+xlabel('radians / \pi')
 
 end

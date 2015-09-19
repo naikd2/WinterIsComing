@@ -1,4 +1,5 @@
-
+% % PDF Examples
+%
 % % Program for evaluating the DTFT of an exponential sequence
 % %
 % % Generate the exponential sequence
@@ -68,60 +69,28 @@ nx = [-2 2];
 %bounds of y
 ny = [-2 2];
 
-
-% %length of x
-% xl = abs( nx(1) ) + abs( nx(2) ) + 1
-% %length of y
-% yl = abs( ny(1) ) + abs( ny(2) ) + 1
-% 
-% %length of final result
-% l = xl + yl - 1;
-
-% nxMat = nx(1):1:nx(2)
-% nyMat = ny(1):1:ny(2)
-% 
-% XMat2d = [nxMat ; x]
-% YMat2d = [nyMat ; y]
-% 
-% 
-% rxy = ones(1,l);
-% 
-% for c = 1:l
-%     for n = 1:xl
-%         rxy(c) = x(n) * flipY(c - n + 1);
-%     end
-%     
-% end
-
-
-
-%Probably garbage. Delete later
-% for c = 1:l
-%     matList(c) = [flipY(c) * x(c)]
-% end
-%Sum = sum(matList)
-
-
-%Kevin's way
-%create matrix filled with 0's
-%store values within matrix
-%multiply
-%add up columns
-
-% M = zeros(yl,l)
-% %used to make sure correct columns are added up
-% spacer = 0;
-% 
-% for i = 1:yl
-%     for j = 1:xl
-%         M(i,j+spacer) = [flipY(j) * x(i)];
-%     end
-%     spacer = spacer + 1;
-% end
-% M
-% sum(M)
-
 ccrs(x,y,nx,ny)
+
+% x5 = ones(1, 5);
+% w=linspace(-3*pi,3*pi,256);
+% figure(2);
+% plot(freqz(x5,1,w)); grid
 
 %Actual Answer using matlab built in function
 % xco =  xcorr(x,y)
+
+% %Testing DTFT with example 1
+% n=-5:10;
+% a=0.5;
+% u=[ones(1,16)];
+% x=a.^n.*u;
+% 
+% N = 256;
+% X = fft(x, N);
+% w = 2*pi * (0:(N-1)) / N;
+% w2 = fftshift(w);
+% w3 = unwrap(w2 - 2*pi);
+% figure(4)
+% plot(w3/pi, abs(fftshift(X)))
+% grid
+% xlabel('radians / \pi')
