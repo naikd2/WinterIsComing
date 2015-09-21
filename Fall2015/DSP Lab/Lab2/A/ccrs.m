@@ -1,4 +1,4 @@
-function [xco, dtft] = ccrs(x,y,nx,ny)
+function [xco, dtft,engyDSpec] = ccrs(x,y,nx,ny)
 %Kevin's way
 
 %Time reverse the y matrx
@@ -33,11 +33,15 @@ xco = sum(M);
 %DTFT method taken from http://blogs.mathworks.com/steve/2010/06/25/plotting-the-dtft-using-the-output-of-fft/
 N = 256;
 X = fft(x, N);
-w = 2*pi * (0:(N-1)) / N;
+w = 2*pi * (0:(N-1)) / N; 
 w2 = fftshift(w);
 w3 = unwrap(w2 - 2*pi);
-plot(w3/pi, abs(fftshift(X)))
+plot(w3/pi, abs(fftshift(X)));
 grid
 xlabel('radians / \pi')
 
+%fftshift(X) - |X(e^jw)|^2
+engyDSpec = fftshift(X)/(2*pi)
+plot(w3/pi, abs(engyDSpec))
+xlabel('radians / \pi')
 end
