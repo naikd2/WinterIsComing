@@ -3,7 +3,7 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date:    18:58:28 02/05/2016 
+// Create Date:    15:22:24 01/29/2016 
 // Design Name: 
 // Module Name:    processor 
 // Project Name: 
@@ -31,7 +31,7 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
     output                              wr_en;
                                 
     reg             [15:0]              IR;             //Instruction Register
-    reg             [15:0]              MD;             //Memory Data Register
+    reg             [11:0]              MD;             //Memory Data Register
     reg             [11:0]              PC;             //Program Counter
     reg             [11:0]              MA;             //Memory Address Register
     reg             [15:0]              AC;             //Accumulator
@@ -134,7 +134,7 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
             S12: begin
                     if(AM)
                         NXstate <= S13;
-                    else if(IR[15:13] == ADC)
+                    else if(IR[11:9] == ADC)
                         NXstate <= S15;
                     else
                         NXstate <= S16;
@@ -157,8 +157,8 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
         if(!rst_n)
         begin
             IR <= 16'd0;
-            MD <= 16'd0;
-            AC <= 16'd0;
+            MD <= 12'd0;
+            AC <= 16'd1;
             PC <= 12'd0;
             MA <= 12'd0;
             //M <= 16'd0;
@@ -167,7 +167,7 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
         end
         else if(PRstate == S0)
         begin
-            IR[15:0] <= M[15:0];                                    //IR <= M[PC];
+            IR <= M;                                    //IR <= M[PC];
             wr_en <= 1'b0;
         end
         else if(PRstate == S1)
@@ -181,7 +181,7 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
         end
         else if(PRstate == S3)
         begin
-            {C, AC} <= AC + 1'b1;
+            {C, AC} <= AC + 1;
         end
         else if(PRstate == S4)
         begin
@@ -189,7 +189,7 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
         end
         else if(PRstate == S5)
         begin
-            MD <= M;
+            MD <= M[11:0];
         end
         else if(PRstate == S6)
         begin
@@ -205,29 +205,29 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
         end
         else if(PRstate == S9)
         begin
-            MD <= M;
+            MD <= M[11:0];
         end
         else if(PRstate == S10)
         begin
-            MA <= MD[11:0];             //which bits to omit?
+            MA <= MD;             //which bits to omit?
         end
         else if(PRstate == S11)
         begin
             mem_out <= AC;
             wr_en <= 1'b1;
-            AC <= 16'b0;
+            AC <= 0;
         end
         else if(PRstate == S12)
         begin
-            MD <= M;
+            MD <= M[11:0];
         end
         else if(PRstate == S13)
         begin
-            MA <= MD[11:0];
+            MA <= MD;
         end
         else if(PRstate == S14)
         begin
-            MD <= M;
+            MD <= M[11:0];
         end
         else if(PRstate == S15)
         begin
@@ -235,7 +235,7 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
         end
         else
         begin
-            AC <= MD;
+            AC <= {4'h0, MD};
         end
     end
     
