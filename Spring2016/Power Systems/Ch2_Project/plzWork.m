@@ -15,7 +15,7 @@ ZT = ((Z3 + ZL) * Z2)/((Z3+ZL)+Z2);
 I1 = V1/(Z1 + ZT);
 
 %Solve for V2
-V2 = V1 - I1 * Z1;
+V2 = V1 - (I1 * Z1);
 
 %Solve for I2
 I2 = V2/Z2;
@@ -34,11 +34,41 @@ I1 = [abs(I1) angle(I1)];
 I2 = [abs(I2) angle(I2)];
 IL = [abs(IL) angle(IL)];
 
+%Part 2
+V3 = V2 - (IL * ZL);
+PL = V3 * IL * cos(angle(V3) - angle(IL));
+QL = V3 * IL * sin(angle(IL - V3));
 
+SL = P + Q;
+QC = -(QL);
+
+S = V3^2/(-QC);
+
+XC = S;
+
+
+%Part 3
+%Solve for I1
+newZT = (ZL * XC)/ (ZL + XC);
+newZT = ((Z3 + newZT) * Z2)/((Z3+newZT)+Z2);
+newI1 = V1/(Z1 + newZT);
+
+%Solve for V2
+newV2 = V1 - (newI1 * Z1);
+
+%Solve for I2
+newI2 = V2/Z2;
+
+%Solve for IL
+newIL = V2/(Z3 + ZL);
+
+%Solve for apparent Power SL
+newV3 = newV2 - (newIL * newZL);
+PL = V3 * IL * cos(angle(V3) - angle(IL));
+QL = V3 * IL * sin(angle(IL - V3));
+
+SL = P + Q;
 end
 
-% % j = sqrt(-1)
-% % 240 / ( ( 10 + j*5 ) + (  ( 1 + j*1) * (j*2.5 +2 +1*j)) / (1+j*1 + j*2.5+2 + 1*j )    )
-% % 
-% % 
+
 
