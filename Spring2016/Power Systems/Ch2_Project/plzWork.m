@@ -20,20 +20,18 @@ IL = V2/(Z3 + ZL);
 PLoss = (I1^2 * Z1) + (I2^2 * Z2) + (IL^2 * Z3);
 
 
-%Convert to phasors
-I1 = [abs(I1) angle(I1)];
-I2 = [abs(I2) angle(I2)];
-IL = [abs(IL) angle(IL)];
 
 %Part 2
 V3 = V2 - (IL * ZL);
 PL = (V3/sqrt(2)) * (IL/sqrt(2)) * cos(angle(V3) - angle(IL));
 QL = (V3/sqrt(2)) * (IL/sqrt(2)) * sin(angle(IL - V3));
 
+
+
 SL = PL + QL;
 QC = -(QL);
 
-S = V3^2/(-QC);
+S = V3.^2/(-QC);
 
 XC = S;
 
@@ -42,10 +40,10 @@ XC = S;
 %Solve for I1
 newZT = (ZL * XC)/ (ZL + XC);
 newZT = ((Z3 + newZT) * Z2)/((Z3 + newZT) + Z2);
-newIL = V1/(Z1 + newZT);
+newI1 = V1/(Z1 + newZT);
 
 %Solve for V2
-newV2 = V1 - (newIL * Z1);
+newV2 = V1 - (newI1 * Z1);
 
 %Solve for I2
 newI2 = V2/Z2;
@@ -64,8 +62,14 @@ newPLoss = (newI1^2 * Z1) + (newI2^2 * Z2) + (newIL^2 * Z3);
 
 %Part 4
 %Comparing Ratios
-ratio = PLoss/PL;
+ratio = PLoss / PL;
 newRatio = newPLoss/newPL;
+
+
+%Convert to phasors
+I1 = [abs(I1) angle(I1)];
+I2 = [abs(I2) angle(I2)];
+IL = [abs(IL) angle(IL)];
 end
 
 
