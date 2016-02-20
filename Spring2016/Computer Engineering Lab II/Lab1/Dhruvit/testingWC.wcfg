@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="W:/TCNJ/SPRING 2016/Computer Engineering Lab II/Lab 1/Source/Lab1/processor_tb_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="processor_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="14" />
+   <wvobject fp_name="/processor_tb/rst_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rst_n</obj_property>
+      <obj_property name="ObjectShortName">rst_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/AC" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">AC[15:0]</obj_property>
+      <obj_property name="ObjectShortName">AC[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/mem_out" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">mem_out[15:0]</obj_property>
+      <obj_property name="ObjectShortName">mem_out[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/M" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">M[15:0]</obj_property>
+      <obj_property name="ObjectShortName">M[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/uut/IR" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">IR[15:0]</obj_property>
+      <obj_property name="ObjectShortName">IR[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/uut/MD" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">MD[15:0]</obj_property>
+      <obj_property name="ObjectShortName">MD[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/uut/PC" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">PC[11:0]</obj_property>
+      <obj_property name="ObjectShortName">PC[11:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/uut/MA" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">MA[11:0]</obj_property>
+      <obj_property name="ObjectShortName">MA[11:0]</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#008000</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/uut/PRstate" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">PRstate[4:0]</obj_property>
+      <obj_property name="ObjectShortName">PRstate[4:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/uut/AM" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">AM</obj_property>
+      <obj_property name="ObjectShortName">AM</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/uut/C" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">C</obj_property>
+      <obj_property name="ObjectShortName">C</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/wr_en" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">wr_en</obj_property>
+      <obj_property name="ObjectShortName">wr_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/processor_tb/memory" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">memory[25:0,15:0]</obj_property>
+      <obj_property name="ObjectShortName">memory[25:0,15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <wvobject fp_name="/processor_tb/memory[25]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[25,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[25,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[24]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[24,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[24,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[23]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[23,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[23,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[22]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[22,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[22,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[21]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[21,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[21,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[20]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[20,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[20,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[19]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[19,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[19,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[18]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[18,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[18,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[17]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[17,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[17,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[16]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[16,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[16,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[15]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[15,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[15,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[14]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[14,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[14,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[13]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[13,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[13,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[12]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[12,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[12,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[11]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[11,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[11,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[10]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[10,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[10,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[9]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[9,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[9,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[8]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[8,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[8,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[7]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[7,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[7,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[6]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[6,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[6,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[5]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[5,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[5,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[4]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[4,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[4,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[3]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[3,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[3,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[2]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[2,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[2,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[1]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[1,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[1,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/processor_tb/memory[0]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[0,15:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[0,15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>

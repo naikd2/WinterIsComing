@@ -157,6 +157,8 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
             MA 		<= 12'd0;
             mem_out 	<= 16'd0;
             wr_en 	<= 1'd0;
+				C			<= 1'd0;
+				AM 		<= 1'd0;
         end
 		  
         else if(PRstate == S0)
@@ -196,8 +198,6 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
         else if(PRstate == S8)
         begin
             MA <= IR[11:0];
-					if(NXstate == S11)
-						mem_out <= AC; 
         end
         else if(PRstate == S9)
         begin
@@ -205,13 +205,13 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
         end
         else if(PRstate == S10)
         begin
+		
             MA <= MD[11:0];             //which bits to omit?
-				mem_out <= AC; 
+
         end
         else if(PRstate == S11)
         begin
-				$display (" mem_out = %d", mem_out);
-           //mem_out <= AC;
+				mem_out <= AC;
             wr_en <= 1'b1;
             AC <= 16'b0;
         end
@@ -229,7 +229,8 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
         end
         else if(PRstate == S15)
         begin
-            AC <= AC + MD + C;
+            {C, AC} <= AC + MD + C;
+				
         end
         else 
         begin
