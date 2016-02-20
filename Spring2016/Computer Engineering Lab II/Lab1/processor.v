@@ -1,94 +1,85 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date:    15:22:24 01/29/2016 
-// Design Name: 
-// Module Name:    processor 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
-//
-//////////////////////////////////////////////////////////////////////////////////
+
 module processor(clk, rst_n, AC, mem_out, wr_en, M
     );
     
     input                               clk;            //Clock
     input                               rst_n;          //Reset
       
-    input           [15:0]              M;
+    input           [15:0]              M;              //Instruction and Data Input
     
-    output          [15:0]              AC;
-    output          [15:0]              mem_out;
-    output                              wr_en;
+    output          [15:0]              AC;             //Accumulator
+    output          [15:0]              mem_out;        //Output data to be written to memory
+    output                              wr_en;          //Memory write enable
                                 
     reg             [15:0]              IR;             //Instruction Register
-    reg             [11:0]              MD;             //Memory Data Register
+    reg             [15:0]              MD;             //Memory Data Register
     reg             [11:0]              PC;             //Program Counter
     reg             [11:0]              MA;             //Memory Address Register
     reg             [15:0]              AC;             //Accumulator
 
     
-    reg                                 AM;             //AM bit in instruction (bit 12)  
-    //reg             [15:0]              M;
-    
+    reg                                 AM;             //AM bit (bit 12)      
     reg             [15:0]              mem_out;
     reg                                 wr_en;
     
-    reg                                 C;
+    reg                                 C;              //Carry
    
     reg             [4:0]               PRstate;        //Present State
     reg             [4:0]               NXstate;        //Next State
     
-    localparam                          S0 = 5'd0;
-    localparam                          S1 = 5'd1;
-    localparam                          S2 = 5'd2;
-    localparam                          S3 = 5'd3;
-    localparam                          S4 = 5'd4;
-    localparam                          S5 = 5'd5;
-    localparam                          S6 = 5'd6;
-    localparam                          S7 = 5'd7;
-    localparam                          S8 = 5'd8;
-    localparam                          S9 = 5'd9;
-    localparam                          S10 = 5'd10;
-    localparam                          S11 = 5'd11;
-    localparam                          S12 = 5'd12;
-    localparam                          S13 = 5'd13;
-    localparam                          S14 = 5'd14;
-    localparam                          S15 = 5'd15;
-    localparam                          S16 = 5'd16;
+	 
+    //States
+    localparam                          S0 = 5'd0;      //State 0
+    localparam                          S1 = 5'd1;      //State 1
+    localparam                          S2 = 5'd2;      //State 2
+    localparam                          S3 = 5'd3;      //State 3
+    localparam                          S4 = 5'd4;      //State 4
+    localparam                          S5 = 5'd5;      //State 5
+    localparam                          S6 = 5'd6;      //State 6
+    localparam                          S7 = 5'd7;      //State 7
+    localparam                          S8 = 5'd8;      //State 8
+    localparam                          S9 = 5'd9;      //State 9
+    localparam                          S10 = 5'd10;    //State 10
+    localparam                          S11 = 5'd11;    //State 11
+    localparam                          S12 = 5'd12;    //State 12
+    localparam                          S13 = 5'd13;    //State 13
+    localparam                          S14 = 5'd14;    //State 14
+    localparam                          S15 = 5'd15;    //State 15
+    localparam                          S16 = 5'd16;    //State 16
     
-    localparam                          NOT = 3'b000;
-    localparam                          ADC = 3'b001;
-    localparam                          JPA = 3'b010;
-    localparam                          INC = 3'b011;
-    localparam                          STA = 3'b100;
-    localparam                          LDA = 3'b101;
+    //Opcodes
+    localparam                          NOT = 3'b000;   //Not
+    localparam                          ADC = 3'b001;   //Add with Carry
+    localparam                          JPA = 3'b010;   //Jump
+    localparam                          INC = 3'b011;   //Increment
+    localparam                          STA = 3'b100;   //Store and Clear
+    localparam                          LDA = 3'b101;   //Load Accumulator
     
     
     
-
+    //Defining Present State of processor
     always @(posedge clk or negedge rst_n)
     begin
         if(!rst_n)
-            PRstate <= S0;
-            
+            PRstate <= S0;           
         else
+		begin
             PRstate <= NXstate;
+			IR 		<= IR;
+            MD 		<= MD;
+            AC 		<= AC;
+            PC 		<= PC;
+            MA 		<= MA;
+            mem_out <= mem_out;
+            wr_en 	<= wr_en;
+		end
     end
 
 
+    //Defining Next state of processor
     always @(*)
     begin
-        
             case(PRstate)
             S0: NXstate <= S1;
             S1: begin
@@ -100,7 +91,7 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
                     begin
                         if(AC > 0)
                         begin
-                            if(AM)
+                            if(IR[12] == 1'b1)              // AM = 1 		   
                                 NXstate <= S4;
                             else
                                 NXstate <= S7;
@@ -134,7 +125,7 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
             S12: begin
                     if(AM)
                         NXstate <= S13;
-                    else if(IR[11:9] == ADC)
+                    else if(IR[15:13] == ADC)
                         NXstate <= S15;
                     else
                         NXstate <= S16;
@@ -149,26 +140,29 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
             S15: NXstate <= S0;
             S16: NXstate <= S0;
             endcase
-        
     end
     
+    
+    //Defining instructions for different states
     always @(posedge clk or negedge rst_n)
     begin
         if(!rst_n)
         begin
-            IR <= 16'd0;
-            MD <= 12'd0;
-            AC <= 16'd1;
-            PC <= 12'd0;
-            MA <= 12'd0;
-            //M <= 16'd0;
+            IR 		<= 16'd0;
+            MD 		<= 16'd0;
+            AC 		<= 16'd0;
+            PC 		<= 12'd0;
+            MA 		<= 12'd0;
             mem_out <= 16'd0;
-            wr_en <= 1'd0;
+            wr_en 	<= 1'd0;
+			C	    <= 1'd0;
+			AM 	    <= 1'd0;
         end
+		  
         else if(PRstate == S0)
         begin
-            IR <= M;                                    //IR <= M[PC];
-            wr_en <= 1'b0;
+            IR[15:0] <= M[15:0];                                    //IR <= M[PC];
+            wr_en <= 1'd0;
         end
         else if(PRstate == S1)
         begin
@@ -181,7 +175,7 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
         end
         else if(PRstate == S3)
         begin
-            {C, AC} <= AC + 1;
+            {C, AC} <= AC + 1'b1;
         end
         else if(PRstate == S4)
         begin
@@ -189,11 +183,11 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
         end
         else if(PRstate == S5)
         begin
-            MD <= M[11:0];
+            MD <= M;
         end
         else if(PRstate == S6)
         begin
-            PC <= MD[11:0];                     //which bits to omit?
+            PC <= MD[11:0];                     
         end
         else if(PRstate == S7)
         begin
@@ -205,37 +199,38 @@ module processor(clk, rst_n, AC, mem_out, wr_en, M
         end
         else if(PRstate == S9)
         begin
-            MD <= M[11:0];
+            MD <= M;
         end
         else if(PRstate == S10)
-        begin
-            MA <= MD;             //which bits to omit?
+        begin	
+            MA <= MD[11:0];           
         end
         else if(PRstate == S11)
         begin
             mem_out <= AC;
             wr_en <= 1'b1;
-            AC <= 0;
+            AC <= 16'b0;
         end
         else if(PRstate == S12)
         begin
-            MD <= M[11:0];
+            MD <= M;
         end
         else if(PRstate == S13)
         begin
-            MA <= MD;
+            MA <= MD[11:0];
         end
         else if(PRstate == S14)
         begin
-            MD <= M[11:0];
+            MD <= M;
         end
         else if(PRstate == S15)
         begin
-            AC <= AC + MD + C;
+            {C, AC} <= AC + MD + C;
+				
         end
-        else
+        else 
         begin
-            AC <= {4'h0, MD};
+            AC <= MD;
         end
     end
     
