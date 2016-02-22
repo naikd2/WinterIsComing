@@ -16,58 +16,49 @@ IL = V2/(Z3 + ZL);
 
 
 %Calculate Power Loss
-newPLoss1 = abs(V1-V2) * abs(I1) * cosd(radtodeg(angle(V1-V2)) - radtodeg(angle(I1)))
-newPLoss2 = abs(V2) * abs(I2) * cosd(radtodeg(angle(V2)) - radtodeg(angle(I2)))
-newPLoss3 = abs(V2) * abs(IL) * cosd(radtodeg(angle(V2)) - radtodeg(angle(IL)))
-newPLoss = newPLoss1 + newPLoss2 + newPLoss3
+%Power loss is power in all other components besides load?
+PLoss = (I1^2 * Z1) + (I2^2 * Z2) + (IL^2 * Z3);
+
 
 
 %Part 2
-V3 = V2 - (IL * Z3);
-PL = abs(V3) * abs(IL) * cosd(radtodeg(angle(V3)) - radtodeg(angle(IL)));
-QL = abs(V3) * abs(IL) * sind(radtodeg(angle(V3)) - radtodeg(angle(IL)));
+V3 = V2 - (IL * ZL);
+PL = (V3/sqrt(2)) * (IL/sqrt(2)) * cos(angle(V3) - angle(IL));
+QL = (V3/sqrt(2)) * (IL/sqrt(2)) * sin(angle(IL - V3));
 
 
 
-SL = PL + j*QL
-QC = -(QL)
+SL = PL + QL;
+QC = -(QL);
 
+S = V3.^2/(-QC);
 
-Z = (abs(V3))^2/(j*-QC)
-
-Xpfc = Z
-% Xpfc = [abs(Z) radtodeg(angle(Z))]
+XC = S;
 
 
 %Part 3
 %Solve for I1
-newZL = (ZL * Xpfc)/ (ZL + Xpfc);
-newZT = ((Z3 + newZL) * Z2)/((Z3 + newZL) + Z2);
+newZT = (ZL * XC)/ (ZL + XC);
+newZT = ((Z3 + newZT) * Z2)/((Z3 + newZT) + Z2);
 newI1 = V1/(Z1 + newZT);
 
 %Solve for V2
 newV2 = V1 - (newI1 * Z1);
 
 %Solve for I2
-newI2 = newV2/Z2;
+newI2 = V2/Z2;
 
 %Solve for IL
-newIL = newV2/(Z3 + newZL);
+newIL = V2/(Z3 + newZT);
 
 %Solve for apparent Power SL
 newV3 = newV2 - (newIL * newZT);
-newPL = abs(newV3) * abs(newIL) * cosd(radtodeg(angle(newV3)) - radtodeg(angle(newIL)));
-newQL = abs(newV3) * abs(newIL) * sind(radtodeg(angle(newV3)) - radtodeg(angle(newIL)));
+newPL = (newV3/sqrt(2)) * (newIL/sqrt(2)) * cos(angle(newV3) - angle(newIL));
+newQL = (newV3/sqrt(2)) * (newIL/sqrt(2)) * sin(angle(newIL) - angle(newV3));
 
+newSL = newPL + newQL;
 
-
-newSL = newPL + j*newQL;
-
-
-newPLoss1 = abs(newV1-newV2) * abs(newI1) * cosd(radtodeg(angle(newV1-newV2)) - radtodeg(angle(newI1)))
-newPLoss2 = abs(newV2) * abs(newI2) * cosd(radtodeg(angle(newV2)) - radtodeg(angle(newI2)))
-newPLoss3 = abs(newV2) * abs(newIL) * cosd(radtodeg(angle(newV2)) - radtodeg(angle(newIL)))
-newPLoss = newPLoss1 + newPLoss2 + newPLoss3
+newPLoss = (newI1^2 * Z1) + (newI2^2 * Z2) + (newIL^2 * Z3);
 
 %Part 4
 %Comparing Ratios
@@ -76,9 +67,9 @@ newRatio = newPLoss/newPL;
 
 
 %Convert to phasors
-I1 = [abs(I1) radtodeg(angle(I1))];
-I2 = [abs(I2) radtodeg(angle(I2))];
-IL = [abs(IL) radtodeg(angle(IL))];
+I1 = [abs(I1) angle(I1)];
+I2 = [abs(I2) angle(I2)];
+IL = [abs(IL) angle(IL)];
 end
 
 
