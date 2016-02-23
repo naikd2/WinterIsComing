@@ -86,16 +86,32 @@ nI3 = nV2 / ZLP;
 
 %Solve for IL
 nV3 = nV2 - nI3 * Z3;
-nIL = nV3 / ZL;
-nIx = nV3 / Xpfc;
 
-nI1ph = Phasor(nI1);
-nI2ph = Phasor(nI2);
-nI3ph = Phasor(nI3);
-nILph = Phasor(nIL);
-nIxph = Phasor(nIx);
-nV2ph = Phasor(nV2);
-nV3ph = Phasor(nV3);
+nIL = nV3 / ZL;
+
+nIx = nV3 / Xpfc
+
+nI3 = nV2/(Z3 + nZL)
+nV3 = V2 - (nI3 * Z3);
+nIL = nV3 / ZL
+nIx = nI3 - nIL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 nLoadphi = nV3ph(2) - nILph(2);
 
@@ -114,19 +130,14 @@ Z1 = 10 + j*5;
 Z2 = 1 + j;
 Z3 = j*2.5;
 ZL = 2 + j;
-
-
 const = 2*pi*60;
 
-digits(7)
+% digits(7)
 % X1 = vpa(5/const)
 % X2 = vpa(1/const)
 % X3 = vpa(2.5/const)
 % X4 = vpa(1/const)
 % XC = vpa(5*const)
-
-% xc = vpa(1/(5*377))
-
 
 % end
 
