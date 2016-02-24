@@ -1,4 +1,3 @@
-`timescale 1ns / 1ps
 
 module processor(clk, rst_n, AC, mem_out, wr_en, M
     );

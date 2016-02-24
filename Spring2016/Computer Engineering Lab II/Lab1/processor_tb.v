@@ -1,7 +1,5 @@
 `timescale 1ns / 1ps
 
-
-
 module processor_tb;
 
 	// Inputs
@@ -75,7 +73,7 @@ module processor_tb;
     begin
         forever
         begin
-            #5 clk = ~clk;
+            #500 clk = ~clk;            // 1MHZ, 500 = (1/2)*[(10^9)/(10^6)]
             count = count + 1;                                                                                  
         end
     end
