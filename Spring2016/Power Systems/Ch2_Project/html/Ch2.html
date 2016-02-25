@@ -1,0 +1,293 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Ch2</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-02-24"><meta name="DC.source" content="Ch2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span>  [I1, I2, IL] = Ch2(V1, Z1, Z2, Z3, ZL)
+
+
+j = 1i;
+
+Phasor = inline(<span class="string">'[abs(z) radtodeg(angle(z))]'</span>,<span class="string">'z'</span>);
+<span class="comment">%Part 1</span>
+
+<span class="comment">%Find total Impedence in CKT</span>
+ZT = ZL + Z3;
+ZT = (ZT * Z2) / (ZT + Z2);
+ZT = ZT + Z1;
+
+<span class="comment">%Solve for I1</span>
+I1 = V1 / ZT;
+
+<span class="comment">%Solve for V2</span>
+V2 = V1 - (I1 * Z1);
+
+<span class="comment">%Solve for I2</span>
+I2 = V2/Z2;
+
+<span class="comment">%Solve for IL</span>
+IL = V2/(Z3 + ZL);
+V3 = IL * ZL;
+
+I1ph = Phasor(I1);
+I2ph = Phasor(I2);
+ILph = Phasor(IL);
+V3ph = Phasor(V3);
+V2ph = Phasor(V2);
+V1ph = Phasor(V1);
+
+<span class="comment">%Calculate Power Loss</span>
+<span class="comment">%Find Total Power in CKT</span>
+
+Ptotal = V1 * I1ph(1) * cosd( -1* (I1ph(2)));
+Loadphi = V3ph(2) - ILph(2);
+Pload = V3ph(1) * ILph(1) * cosd(Loadphi);
+Ploss = Ptotal - Pload;
+ratio = Ploss / Pload;
+
+<span class="comment">% %Part 2</span>
+
+Pload = V3ph(1) * ILph(1) * cosd(Loadphi);
+Qload =  V3ph(1) * ILph(1) * sind(Loadphi);
+
+Sload = Pload + j*Qload;
+Sload_app = sqrt( (Pload*Pload)  + (Qload * Qload));
+
+Z = (V3ph(1))^2 / ( -Qload);
+Xpfc = Z*j;
+
+Xph = Phasor(Xpfc);
+
+<span class="comment">%Part 3</span>
+
+ZLP = (ZL * Xpfc) / (ZL + Xpfc)  + Z3;
+
+nZT = ( (ZLP * Z2) / (ZLP + Z2) ) + Z1;
+
+<span class="comment">%Solve for I1</span>
+nI1 = V1 / nZT;
+
+<span class="comment">%Solve for V2</span>
+nV2 = V1 - (nI1 * Z1);
+
+<span class="comment">%Solve for I2</span>
+nI2 = nV2/Z2;
+
+<span class="comment">%Solve for I3</span>
+nI3 = nV2 / ZLP;
+
+<span class="comment">%Solve for IL</span>
+nV3 = nV2 - nI3 * Z3;
+nIL = nV3 / ZL;
+nIx = nV3 / Xpfc;
+
+nI1ph = Phasor(nI1);
+nI2ph = Phasor(nI2);
+nI3ph = Phasor(nI3);
+nILph = Phasor(nIL);
+nIxph = Phasor(nIx);
+nV2ph = Phasor(nV2);
+nV3ph = Phasor(nV3);
+
+<span class="comment">% Complex Power</span>
+nLoadphi = nV3ph(2) - nILph(2);
+nXphi = nV3ph(2) - nIxph(2);
+nPload = nV3ph(1) * nILph(1) * cosd(nLoadphi);
+nQload =  nV3ph(1) * nILph(1) * sind(nLoadphi);
+
+nPx = nV3ph(1) * nIxph(1) * cosd(nXphi);
+nQx =  nV3ph(1) * nIxph(1) * sind(nXphi);
+
+nSload = nPload + j*nQload;
+nSx = nPx + j*nQx;
+nSload_app = sqrt( (nPload*nPload)  + (nQload * nQload));
+
+nPtotal = V1 * nI1ph(1) * cosd( -1* (nI1ph(2)));
+nPload = nV3ph(1) * nILph(1) * cosd(nLoadphi);
+nPloss = nPtotal - nPload;
+nratio = nPloss / nPload;
+
+I1 = Phasor(I1);
+I2 = Phasor(I2);
+IL = Phasor(IL);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Error using Ch2 (line 10)
+Not enough input arguments.
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function  [I1, I2, IL] = Ch2(V1, Z1, Z2, Z3, ZL)
+
+
+j = 1i;
+
+Phasor = inline('[abs(z) radtodeg(angle(z))]','z');
+%Part 1
+
+%Find total Impedence in CKT
+ZT = ZL + Z3;
+ZT = (ZT * Z2) / (ZT + Z2);
+ZT = ZT + Z1;
+
+%Solve for I1
+I1 = V1 / ZT;
+
+%Solve for V2
+V2 = V1 - (I1 * Z1);
+
+%Solve for I2
+I2 = V2/Z2;
+
+%Solve for IL
+IL = V2/(Z3 + ZL);
+V3 = IL * ZL;
+
+I1ph = Phasor(I1);
+I2ph = Phasor(I2);
+ILph = Phasor(IL);
+V3ph = Phasor(V3);
+V2ph = Phasor(V2);
+V1ph = Phasor(V1);
+
+%Calculate Power Loss
+%Find Total Power in CKT
+
+Ptotal = V1 * I1ph(1) * cosd( -1* (I1ph(2)));
+Loadphi = V3ph(2) - ILph(2);
+Pload = V3ph(1) * ILph(1) * cosd(Loadphi);
+Ploss = Ptotal - Pload;
+ratio = Ploss / Pload;
+
+% %Part 2
+
+Pload = V3ph(1) * ILph(1) * cosd(Loadphi);
+Qload =  V3ph(1) * ILph(1) * sind(Loadphi);
+
+Sload = Pload + j*Qload;
+Sload_app = sqrt( (Pload*Pload)  + (Qload * Qload));
+
+Z = (V3ph(1))^2 / ( -Qload); 
+Xpfc = Z*j;
+
+Xph = Phasor(Xpfc);
+
+%Part 3
+
+ZLP = (ZL * Xpfc) / (ZL + Xpfc)  + Z3;
+
+nZT = ( (ZLP * Z2) / (ZLP + Z2) ) + Z1;
+
+%Solve for I1
+nI1 = V1 / nZT;
+
+%Solve for V2
+nV2 = V1 - (nI1 * Z1);
+
+%Solve for I2
+nI2 = nV2/Z2;
+
+%Solve for I3
+nI3 = nV2 / ZLP;
+
+%Solve for IL
+nV3 = nV2 - nI3 * Z3;
+nIL = nV3 / ZL;
+nIx = nV3 / Xpfc;
+
+nI1ph = Phasor(nI1);
+nI2ph = Phasor(nI2);
+nI3ph = Phasor(nI3);
+nILph = Phasor(nIL);
+nIxph = Phasor(nIx);
+nV2ph = Phasor(nV2);
+nV3ph = Phasor(nV3);
+
+% Complex Power 
+nLoadphi = nV3ph(2) - nILph(2);
+nXphi = nV3ph(2) - nIxph(2);
+nPload = nV3ph(1) * nILph(1) * cosd(nLoadphi);
+nQload =  nV3ph(1) * nILph(1) * sind(nLoadphi);
+
+nPx = nV3ph(1) * nIxph(1) * cosd(nXphi);
+nQx =  nV3ph(1) * nIxph(1) * sind(nXphi);
+
+nSload = nPload + j*nQload;
+nSx = nPx + j*nQx;
+nSload_app = sqrt( (nPload*nPload)  + (nQload * nQload));
+
+nPtotal = V1 * nI1ph(1) * cosd( -1* (nI1ph(2)));
+nPload = nV3ph(1) * nILph(1) * cosd(nLoadphi);
+nPloss = nPtotal - nPload;
+nratio = nPloss / nPload;
+
+I1 = Phasor(I1);
+I2 = Phasor(I2);
+IL = Phasor(IL);
+end
+
+
+
+##### SOURCE END #####
+--></body></html>

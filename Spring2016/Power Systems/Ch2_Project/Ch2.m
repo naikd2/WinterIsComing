@@ -1,22 +1,9 @@
-% function  [I1, I2, IL] = plzWork(V1, Z1, Z2, Z3, ZL)
-clear all
-close all
+function  [I1, I2, IL] = Ch2(V1, Z1, Z2, Z3, ZL)
+
 
 j = 1i;
 
-V1 = 240 + j*0;
-Z1 = 10 + j*5;
-Z2 = 1 + j;
-Z3 = j*2.5;
-ZL = 2 + j;
-
 Phasor = inline('[abs(z) radtodeg(angle(z))]','z');
-
-Z1ph = Phasor(Z1);
-Z2ph = Phasor(Z2);
-Z3ph = Phasor(Z3);
-ZLph = Phasor(ZL);
-
 %Part 1
 
 %Find total Impedence in CKT
@@ -99,36 +86,25 @@ nV3ph = Phasor(nV3);
 
 % Complex Power 
 nLoadphi = nV3ph(2) - nILph(2);
-
+nXphi = nV3ph(2) - nIxph(2);
 nPload = nV3ph(1) * nILph(1) * cosd(nLoadphi);
 nQload =  nV3ph(1) * nILph(1) * sind(nLoadphi);
 
-nSload = nPload + j*nQload;
+nPx = nV3ph(1) * nIxph(1) * cosd(nXphi);
+nQx =  nV3ph(1) * nIxph(1) * sind(nXphi);
 
+nSload = nPload + j*nQload;
+nSx = nPx + j*nQx;
 nSload_app = sqrt( (nPload*nPload)  + (nQload * nQload));
 
 nPtotal = V1 * nI1ph(1) * cosd( -1* (nI1ph(2)));
 nPload = nV3ph(1) * nILph(1) * cosd(nLoadphi);
 nPloss = nPtotal - nPload;
-nratio = nPloss / nPload
+nratio = nPloss / nPload;
 
-Z1 = 10 + j*5;
-Z2 = 1 + j;
-Z3 = j*2.5;
-ZL = 2 + j;
-
-const = 2*pi*60;
-
-digits(7)
-% X1 = vpa(5/const)
-% X2 = vpa(1/const)
-% X3 = vpa(2.5/const)
-% X4 = vpa(1/const)
-% XC = vpa(5*const)
-
-% xc = vpa(1/(5*377))
-
-
-% end
+I1 = Phasor(I1);
+I2 = Phasor(I2);
+IL = Phasor(IL);
+end
 
 
