@@ -20,7 +20,6 @@
 
 #define TRACE_FILE  "TRACE2.DAT"
 #define READ        "rb"        // r for read, b for binary
-
 // number of sets (N)
 #define SET 16
 // number of lines per set (K)
@@ -35,6 +34,7 @@
 // single cache line struct
 typedef struct 
 {
+  unsigned int lastUsed;
 	unsigned long tag;
 	unsigned char valid; 
 } cLine;
@@ -44,7 +44,7 @@ cLine cache[LINE][SET];
 
 int main()
 {	
-	 printf("%d\n", INDEX);
+  printf("%d\n", TAG);
 	// initilize cache to zero
 	memset(cache, 0, sizeof(cLine));
 	double hits = 0;
@@ -64,11 +64,9 @@ int main()
     unsigned int indexBits = 0;
     unsigned long tagBits = 0;
 
-    // array of fifo pointers
-    unsigned char fifoPt[SET] = {0};
-    unsigned char tmpPt = 0;
     bool replace = false;
-
+    unsigned char lruLine = 0;
+    unsigned int lru = 0;
 
     FILE *fp;
     fp = fopen(TRACE_FILE,READ);
@@ -129,6 +127,7 @@ int main()
 		{
 			fprintf(pFile,"HIT\n");
 			hits++;
+      cache[l][indexBits].lastUsed = n;
 			replace = false; 
 			break;
 		}
@@ -138,22 +137,41 @@ int main()
 	{
 		fprintf(pFile,"MISS\n");
 		misses++;
-		tmpPt = fifoPt[indexBits];
-
-		fprintf(pFile,"Replace in Line: %u of Set: %u\n", tmpPt,indexBits);
-
-		cache[tmpPt][indexBits].tag = tagBits;
-		cache[tmpPt][indexBits].valid = 1;
-
-		if(tmpPt == LINE-1)
-		{
-			tmpPt = 0;
-		}
-		else
-		{
-			tmpPt ++;
-		}
-		fifoPt[indexBits] = tmpPt; 
+    // find lru look through lines --- first get all invalid lines then find lru 
+	
+    for (int l = 0; l < LINE; l++)
+    {
+      // find invalid lines to replace
+      if (cache[l][indexBits].valid == 0) 
+      {
+        cache[l][indexBits].tag = tagBits;
+        cache[l][indexBits].valid = 1;
+        cache[l][indexBits].lastUsed = n;
+        fprintf(pFile,"Replace in Line: %u of Set: %u\n", l,indexBits);
+        replace = false;
+        break;
+      }
+    }
+    if(replace == true)
+    {
+      lruLine = 0; 
+      lru = cache[0][indexBits].lastUsed;
+      for (int l = 0; l < LINE; l++)
+      {
+        //find lowest number  
+        fprintf(pFile,"LRU: %d Line: %u\n", cache[l][indexBits].lastUsed, l);
+        if( cache[l][indexBits].lastUsed < lru )
+        {
+          lru = cache[l][indexBits].lastUsed;
+          lruLine = l;
+          fprintf(pFile,"New LRU: %d replaced %u\n", lru, lruLine);
+        }
+      }
+      cache[lruLine][indexBits].tag = tagBits;
+      cache[lruLine][indexBits].valid = 1;
+      cache[lruLine][indexBits].lastUsed = n;
+      fprintf(pFile,"Replace in Line: %u of Set: %u\n", lruLine,indexBits);
+    }
 
 	}
 
@@ -166,6 +184,10 @@ int main()
 
     return 0;
 }
+
+
+
+
 
 
 
