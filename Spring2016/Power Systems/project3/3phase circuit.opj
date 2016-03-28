@@ -80,13 +80,13 @@
     (FileView
       (Path "Design Resources")
       (Path "Design Resources"
-         "H:\(2011-105) Incomplete HVDC Lab\3phase circuit.dsn")
+         "H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit.dsn")
       (Path "Design Resources"
-         "H:\(2011-105) Incomplete HVDC Lab\3phase circuit.dsn" "SCHEMATIC1")
+         "H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit.dsn"
+         "SCHEMATIC1")
       (Path "Outputs")
-      (Select "Design Resources"
-         "H:\(2011-105) Incomplete HVDC Lab\3phase circuit.dsn" "SCHEMATIC1"
-         "PAGE1"))
+      (Select "Outputs"
+         "H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\schematic1.net"))
     (HierarchyView)
     (Doc
       (Type "COrCapturePMDoc")
@@ -94,13 +94,21 @@
         (Placement "44 0 1 -1 -1 -8 -30 0 200 0 556"))
       (Tab 0))
     (Doc
+      (Type "TextFile")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -30 125 1748 125 664"))
+      (Path
+         "H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\schematic1.net")
+      (Scroll "0"))
+    (Doc
       (Type "COrSchematicDoc")
       (Frame
-        (Placement "44 2 3 -1 -1 -8 -30 29 1635 29 588")
-        (Scroll "0 0")
-        (Zoom "100")
+        (Placement "44 2 3 -1 -1 -8 -30 50 1669 50 585")
+        (Scroll "838 16")
+        (Zoom "134")
         (Occurrence "/"))
-      (Path "H:\(2011-105) INCOMPLETE HVDC LAB\3PHASE CIRCUIT.DSN")
+      (Path
+         "H:\WINTERISCOMING\SPRING2016\POWER SYSTEMS\PROJECT3\3PHASE CIRCUIT.DSN")
       (Schematic "SCHEMATIC1")
       (Page "PAGE1")))
-  (MPSSessionName "deesea"))
+  (MPSSessionName "caok1"))

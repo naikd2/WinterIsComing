@@ -1,4 +1,4 @@
-** Profile: "SCHEMATIC1-3phase power"  [ H:\(2011-10-2) HVDC Lab\3phase circuit-pspicefiles\schematic1\3phase power.sim ] 
+** Profile: "SCHEMATIC1-3phase power"  [ H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\3phase power.sim ] 
 
 ** Creating circuit file "3phase power.cir" 
 ** WARNING: THIS AUTOMATICALLY GENERATED FILE MAY BE OVERWRITTEN BY SUBSEQUENT SIMULATIONS
@@ -6,12 +6,13 @@
 *Libraries: 
 * Profile Libraries :
 * Local Libraries :
-* From [PSPICE NETLIST] section of C:\Cadence\SPB_16.3\tools\PSpice\PSpice.ini file:
+* From [PSPICE NETLIST] section of H:\cdssetup\OrCAD_PSpice/16.6.0/PSpice.ini file:
 .lib "nom.lib" 
 
 *Analysis directives: 
 .TRAN  0 0.575 0.5 0.00001 
-.PROBE V(alias(*)) I(alias(*)) W(alias(*)) D(alias(*)) NOISE(alias(*)) 
+.OPTIONS ADVCONV
+.PROBE64 V(alias(*)) I(alias(*)) W(alias(*)) D(alias(*)) NOISE(alias(*)) 
 .INC "..\SCHEMATIC1.net" 
 
 
