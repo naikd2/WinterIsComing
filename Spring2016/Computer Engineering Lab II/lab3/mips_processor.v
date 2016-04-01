@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module mips_processor(instr, wr_dat, wr_reg
+module mips_processor(clk, rst_n, instr, pc_inp, pc_out, wr_dat, wr_reg
     );
 
     input                       clk;
@@ -15,6 +15,18 @@ module mips_processor(instr, wr_dat, wr_reg
     
     reg             [ 5:0]      op_code;
     
+    
+    //Control Reg Values
+    reg                         RegDst;
+    reg                         ALUSrc;
+    reg                         MemtoReg;
+    reg                         RegWrite;
+    reg                         MemRead;
+    reg                         MemWrite;
+    reg                         Branch;
+    reg                         ALUOp1;
+    reg                         ALUOp0;
+    
     // Instruction format values
     reg             [ 4:0]      rs;
     reg             [ 4:0]      rt;
@@ -24,15 +36,11 @@ module mips_processor(instr, wr_dat, wr_reg
     
     reg             [15:0]      immediate;
     
-    // IF/ID Registers
-    reg             [31:0]      pc_reg
-    reg             [31:0]      instr_reg
+    // Pipeline Registers
+    reg             [31:0]      pc_reg[0:2];
+    reg             [31:0]      instr_reg;
     
-    // ID/EX Registers
-    
-    // EX/MEM Registers
-    
-    // MEM/WB Registers
+
     
     
     localparam              AND = 3'b000;
@@ -45,21 +53,118 @@ module mips_processor(instr, wr_dat, wr_reg
     always @(posedge clk or negedge rst_n)
     begin
         if(!rst_n)
-            pc_out <= 32'd0;
+            pc_reg[0] <= 32'd0;
         else
-            pc_out <= pc_inp + 32'd4;
+            pc_reg[0] <= pc_inp + 32'd4;
+    end
+    
+    always @(*)
+    begin
+        pc_reg[1]   <= pc_reg[0];
+        if(branch_value)                //need to define in mem stage
+            pc_out  <= pc_reg[2];
+        else
+            pc_out  <= pc_inp + 32'd4;
+    end
+    
+    /*
+    assign shift_immed = immediate_value << 2;
+    
+    always @(posedge clk)
+    begin
+        pc_reg[2]   <=  pc_reg[1] + shift_immed;
+    end*/
+    
+    /*
+        shiftBy2 of immediate value = immediate value << 2              //This is not clocked
+        pc_reg[2] <= pc_reg[1] + shiftBy2 of immediate value            //This is clocked
+    */
+    
+    
+    always @(*)
+    begin
+        instr_reg <= instr;
     end
     
     // Reading in the opcode and determining instruction type
     always @(posedge clk or negedge rst_n)
     begin
         if(!rst_n)
-            op_code <= 6'd0;
+        begin
+            op_code     <= 6'd0;
+            rs          <= 5'd0;
+            rt          <= 5'd0;
+            rd          <= 5'd0;
+            shamt       <= 5'd0;
+            funct       <= 6'd0;
+            immediate   <= 15'd0; 
+        end
         else
-            op_code <= instr [31:26];
+        begin
+            op_code     <= instr_reg[31:26];
+            rs          <= instr_reg[25:21];
+            rt          <= instr_reg[20:16];
+            rd          <= instr_reg[15:11];
+            shamt       <= instr_reg[10:6 ];
+            funct       <= instr_reg[ 5:0 ];
+            immediate   <= instr_reg[15:0 ]; 
+        end
+    end
+       
+    //Control Bit Values
+    always @(posedge clk)
+    begin
+        if(op_code == 6'd0) // R type
+        begin
+            RegDst      <= 1'b1;
+            ALUSrc      <= 1'b0;
+            MemtoReg    <= 1'b0;
+            RegWrite    <= 1'b1;
+            MemRead     <= 1'b0;
+            MemWrite    <= 1'b0;
+            Branch      <= 1'b0;
+            ALUOp1      <= 1'b1;
+            ALUOp0      <= 1'b0;
+        end
+        else if(op_code == 6'd35) // load word
+        begin
+            RegDst      <= 1'b0;
+            ALUSrc      <= 1'b1;
+            MemtoReg    <= 1'b1;
+            RegWrite    <= 1'b1;
+            MemRead     <= 1'b1;
+            MemWrite    <= 1'b0;
+            Branch      <= 1'b0;
+            ALUOp1      <= 1'b0;
+            ALUOp0      <= 1'b0;
+        end
+        else if(op_code == 6'd43) // store word
+        begin
+            RegDst      <= 1'bx;
+            ALUSrc      <= 1'b1;
+            MemtoReg    <= 1'bx;
+            RegWrite    <= 1'b0;
+            MemRead     <= 1'b0;
+            MemWrite    <= 1'b1;
+            Branch      <= 1'b0;
+            ALUOp1      <= 1'b0;
+            ALUOp0      <= 1'b0;
+        end
+        else if(op_code == 6'd4) // beq
+        begin
+            RegDst      <= 1'bx;
+            ALUSrc      <= 1'b0;
+            MemtoReg    <= 1'bx;
+            RegWrite    <= 1'b0;
+            MemRead     <= 1'b0;
+            MemWrite    <= 1'b0;
+            Branch      <= 1'b1;
+            ALUOp1      <= 1'b0;
+            ALUOp0      <= 1'b1;
+        end
     end
     
-    // R type instructions (opcode = 6'd0)
+  /*  // R type instructions (opcode = 6'd0)
     always @(posedge clk or negedge rst_n)
     begin
         if(!rst_n)
@@ -67,6 +172,6 @@ module mips_processor(instr, wr_dat, wr_reg
         begin
             
         end
-    end
+    end*/
 
 endmodule
