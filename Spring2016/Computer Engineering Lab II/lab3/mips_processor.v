@@ -16,16 +16,6 @@ module mips_processor(clk, rst_n, instr, pc_inp, pc_out, wr_dat, wr_reg
     reg             [ 5:0]      op_code;
     
     
-    //Control Reg Values
-    reg                         RegDst;
-    reg                         ALUSrc;
-    reg                         MemtoReg;
-    reg                         RegWrite;
-    reg                         MemRead;
-    reg                         MemWrite;
-    reg                         Branch;
-    reg                         ALUOp1;
-    reg                         ALUOp0;
     
     // Instruction format values
     reg             [ 4:0]      rs;
@@ -49,6 +39,8 @@ module mips_processor(clk, rst_n, instr, pc_inp, pc_out, wr_dat, wr_reg
     localparam              SUB = 3'b110;
     localparam              SLT = 3'b111;
     
+    
+    
     // Reading in instructions
     always @(posedge clk or negedge rst_n)
     begin
@@ -61,7 +53,7 @@ module mips_processor(clk, rst_n, instr, pc_inp, pc_out, wr_dat, wr_reg
     always @(*)
     begin
         pc_reg[1]   <= pc_reg[0];
-        if(branch_value)                //need to define in mem stage
+        if(branch_value)                //need to define branch_value in mem stage
             pc_out  <= pc_reg[2];
         else
             pc_out  <= pc_inp + 32'd4;
@@ -105,64 +97,13 @@ module mips_processor(clk, rst_n, instr, pc_inp, pc_out, wr_dat, wr_reg
             rs          <= instr_reg[25:21];
             rt          <= instr_reg[20:16];
             rd          <= instr_reg[15:11];
-            shamt       <= instr_reg[10:6 ];
-            funct       <= instr_reg[ 5:0 ];
-            immediate   <= instr_reg[15:0 ]; 
+            shamt       <= instr_reg[10: 6];
+            funct       <= instr_reg[ 5: 0];
+            immediate   <= instr_reg[15: 0]; 
         end
     end
        
-    //Control Bit Values
-    always @(posedge clk)
-    begin
-        if(op_code == 6'd0) // R type
-        begin
-            RegDst      <= 1'b1;
-            ALUSrc      <= 1'b0;
-            MemtoReg    <= 1'b0;
-            RegWrite    <= 1'b1;
-            MemRead     <= 1'b0;
-            MemWrite    <= 1'b0;
-            Branch      <= 1'b0;
-            ALUOp1      <= 1'b1;
-            ALUOp0      <= 1'b0;
-        end
-        else if(op_code == 6'd35) // load word
-        begin
-            RegDst      <= 1'b0;
-            ALUSrc      <= 1'b1;
-            MemtoReg    <= 1'b1;
-            RegWrite    <= 1'b1;
-            MemRead     <= 1'b1;
-            MemWrite    <= 1'b0;
-            Branch      <= 1'b0;
-            ALUOp1      <= 1'b0;
-            ALUOp0      <= 1'b0;
-        end
-        else if(op_code == 6'd43) // store word
-        begin
-            RegDst      <= 1'bx;
-            ALUSrc      <= 1'b1;
-            MemtoReg    <= 1'bx;
-            RegWrite    <= 1'b0;
-            MemRead     <= 1'b0;
-            MemWrite    <= 1'b1;
-            Branch      <= 1'b0;
-            ALUOp1      <= 1'b0;
-            ALUOp0      <= 1'b0;
-        end
-        else if(op_code == 6'd4) // beq
-        begin
-            RegDst      <= 1'bx;
-            ALUSrc      <= 1'b0;
-            MemtoReg    <= 1'bx;
-            RegWrite    <= 1'b0;
-            MemRead     <= 1'b0;
-            MemWrite    <= 1'b0;
-            Branch      <= 1'b1;
-            ALUOp1      <= 1'b0;
-            ALUOp0      <= 1'b1;
-        end
-    end
+
     
   /*  // R type instructions (opcode = 6'd0)
     always @(posedge clk or negedge rst_n)
@@ -173,5 +114,28 @@ module mips_processor(clk, rst_n, instr, pc_inp, pc_out, wr_dat, wr_reg
             
         end
     end*/
+    
+    
+    
+    
+    
+    
+ //Instruction Fetch Step
+ 
+ 
+ //Instruction Decode Step
+    //Register module declaration
+    //control module declaration
+    wire                    immed_ext;              //sign extended immediate value
+    
+    
+ //Execute Step
+ 
+ 
+ //Memory Step
+ 
+ 
+ //Writeback Step
 
 endmodule
+
