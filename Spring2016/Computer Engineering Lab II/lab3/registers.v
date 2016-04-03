@@ -1,3 +1,13 @@
+//////////////////////////////////////////////////////////////////////////////////
+// Module Name:             registers.v
+// Create Date:             4/3/2016 
+// Last Modification:       4/3/2016
+// Author:                  Kevin Cao, Dhruvit Naik
+// Description:             Contains all register values being read and written to
+//////////////////////////////////////////////////////////////////////////////////
+
+`timescale 1ns / 1ps
+
 module registers(clk, rst_n, rs, rt, wr_reg, wr_dat, read_dat1, read_dat2
     );
     
@@ -85,75 +95,70 @@ module registers(clk, rst_n, rs, rt, wr_reg, wr_dat, read_dat1, read_dat2
         end
     end
     
-    always @(posedge clk)
+    always @(*)
     begin
-        if(clk)
-        begin
-            case(rs)
-                0:  read_dat1 <= zero;
-                2:  read_dat1 <= v0;
-                3:  read_dat1 <= v1;
-                4:  read_dat1 <= a0;
-                5:  read_dat1 <= a1;
-                6:  read_dat1 <= a2;
-                7:  read_dat1 <= a3;
-                8:  read_dat1 <= t0;
-                9:  read_dat1 <= t1;
-                10: read_dat1 <= t2;
-                11: read_dat1 <= t3;
-                12: read_dat1 <= t4;
-                13: read_dat1 <= t5;
-                14: read_dat1 <= t6;
-                15: read_dat1 <= t7;
-                16: read_dat1 <= s0;
-                17: read_dat1 <= s1;
-                18: read_dat1 <= s2;
-                19: read_dat1 <= s3;
-                20: read_dat1 <= s4;
-                21: read_dat1 <= s5;
-                22: read_dat1 <= s6;
-                23: read_dat1 <= s7;
-                24: read_dat1 <= t8;
-                25: read_dat1 <= t9;
-            endcase
-        end
+        case(rs)
+            0:  read_dat1 <= zero;
+            2:  read_dat1 <= v0;
+            3:  read_dat1 <= v1;
+            4:  read_dat1 <= a0;
+            5:  read_dat1 <= a1;
+            6:  read_dat1 <= a2;
+            7:  read_dat1 <= a3;
+            8:  read_dat1 <= t0;
+            9:  read_dat1 <= t1;
+            10: read_dat1 <= t2;
+            11: read_dat1 <= t3;
+            12: read_dat1 <= t4;
+            13: read_dat1 <= t5;
+            14: read_dat1 <= t6;
+            15: read_dat1 <= t7;
+            16: read_dat1 <= s0;
+            17: read_dat1 <= s1;
+            18: read_dat1 <= s2;
+            19: read_dat1 <= s3;
+            20: read_dat1 <= s4;
+            21: read_dat1 <= s5;
+            22: read_dat1 <= s6;
+            23: read_dat1 <= s7;
+            24: read_dat1 <= t8;
+            25: read_dat1 <= t9;
+        endcase
     end
     
     
-    always @(posedge clk)
+    always @(*)
     begin
-        if(clk)
-        begin
-            case(rt)
-                0:  read_dat2 <= zero;
-                2:  read_dat2 <= v0;
-                3:  read_dat2 <= v1;
-                4:  read_dat2 <= a0;
-                5:  read_dat2 <= a1;
-                6:  read_dat2 <= a2;
-                7:  read_dat2 <= a3;
-                8:  read_dat2 <= t0;
-                9:  read_dat2 <= t1;
-                10: read_dat2 <= t2;
-                11: read_dat2 <= t3;
-                12: read_dat2 <= t4;
-                13: read_dat2 <= t5;
-                14: read_dat2 <= t6;
-                15: read_dat2 <= t7;
-                16: read_dat2 <= s0;
-                17: read_dat2 <= s1;
-                18: read_dat2 <= s2;
-                19: read_dat2 <= s3;
-                20: read_dat2 <= s4;
-                21: read_dat2 <= s5;
-                22: read_dat2 <= s6;
-                23: read_dat2 <= s7;
-                24: read_dat2 <= t8;
-                25: read_dat2 <= t9;
-            endcase
-        end
+        case(rt)
+            0:  read_dat2 <= zero;
+            2:  read_dat2 <= v0;
+            3:  read_dat2 <= v1;
+            4:  read_dat2 <= a0;
+            5:  read_dat2 <= a1;
+            6:  read_dat2 <= a2;
+            7:  read_dat2 <= a3;
+            8:  read_dat2 <= t0;
+            9:  read_dat2 <= t1;
+            10: read_dat2 <= t2;
+            11: read_dat2 <= t3;
+            12: read_dat2 <= t4;
+            13: read_dat2 <= t5;
+            14: read_dat2 <= t6;
+            15: read_dat2 <= t7;
+            16: read_dat2 <= s0;
+            17: read_dat2 <= s1;
+            18: read_dat2 <= s2;
+            19: read_dat2 <= s3;
+            20: read_dat2 <= s4;
+            21: read_dat2 <= s5;
+            22: read_dat2 <= s6;
+            23: read_dat2 <= s7;
+            24: read_dat2 <= t8;
+            25: read_dat2 <= t9;
+        endcase
     end
     
+    //Part of the write back stage
     always @(posedge clk)
     begin
         if(RegWrite == 1'b1)

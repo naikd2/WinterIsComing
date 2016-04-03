@@ -1,8 +1,17 @@
-module control(clk, rst_n, op_code, RegDst, ALUSrc, MemtoReg, RegWrite, MemRead, MemWrite, Branch, ALUOp1, ALUOp0
+//////////////////////////////////////////////////////////////////////////////////
+// Module Name:             control.v
+// Create Date:             4/3/2016 
+// Last Modification:       4/3/2016
+// Author:                  Kevin Cao, Dhruvit Naik
+// Description:             control sub-module. Located within instruction decode step.
+//                              Determines what operations are performed within processor
+//////////////////////////////////////////////////////////////////////////////////
+
+`timescale 1ns / 1ps
+
+module control(op_code, RegDst, ALUSrc, MemtoReg, RegWrite, MemRead, MemWrite, Branch, ALUOp1, ALUOp0
     );
     
-    input                       clk;
-    input                       rst_n;
     input                       op_code;
     
     //Control Reg Values
@@ -18,7 +27,7 @@ module control(clk, rst_n, op_code, RegDst, ALUSrc, MemtoReg, RegWrite, MemRead,
     
     
         //Control Bit Values
-    always @(posedge clk)
+    always @(*)
     begin
         if(op_code == 6'd0) // R type
         begin

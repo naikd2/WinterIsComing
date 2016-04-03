@@ -1,23 +1,13 @@
+//////////////////////////////////////////////////////////////////////////////////
+// Module Name:             alu.v
+// Create Date:             3/25/2016 
+// Last Modification:       4/3/2016
+// Author:                  Kevin Cao, Dhruvit Naik
+// Description:             alu component located in execution stage
+//////////////////////////////////////////////////////////////////////////////////
+
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date:    14:36:25 03/25/2016 
-// Design Name: 
-// Module Name:    alu 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
-//
-//////////////////////////////////////////////////////////////////////////////////
+
 module alu(a, b, operation, result, zero
     );
 

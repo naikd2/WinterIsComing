@@ -1,3 +1,11 @@
+//////////////////////////////////////////////////////////////////////////////////
+// Module Name:             mips_processor.v
+// Create Date:             3/25/2016 
+// Last Modification:       4/3/2016
+// Author:                  Kevin Cao, Dhruvit Naik
+// Description:             Top Module of MIPS processor
+//////////////////////////////////////////////////////////////////////////////////
+
 `timescale 1ns / 1ps
 
 module mips_processor(clk, rst_n, instr, pc_inp, pc_out, wr_dat, wr_reg
@@ -32,14 +40,8 @@ module mips_processor(clk, rst_n, instr, pc_inp, pc_out, wr_dat, wr_reg
     
 
     
-    
-    localparam              AND = 3'b000;
-    localparam              OR  = 3'b001;
-    localparam              ADD = 3'b010;
-    localparam              SUB = 3'b110;
-    localparam              SLT = 3'b111;
-    
-    
+    wire            [31:0]      immed_ext;          //sign extended immediate value
+    wire            [31:0]      immed_shift;
     
     // Reading in instructions
     always @(posedge clk or negedge rst_n)
@@ -59,24 +61,39 @@ module mips_processor(clk, rst_n, instr, pc_inp, pc_out, wr_dat, wr_reg
             pc_out  <= pc_inp + 32'd4;
     end
     
-    /*
-    assign shift_immed = immediate_value << 2;
-    
-    always @(posedge clk)
-    begin
-        pc_reg[2]   <=  pc_reg[1] + shift_immed;
-    end*/
-    
-    /*
-        shiftBy2 of immediate value = immediate value << 2              //This is not clocked
-        pc_reg[2] <= pc_reg[1] + shiftBy2 of immediate value            //This is clocked
-    */
     
     
+
+    
+    
+    
+    
+    
+    
+//INSTRUCTION FETCH STEP
+//--------------------------------------------------------------------------------------
+
     always @(*)
     begin
         instr_reg <= instr;
     end
+    
+    
+    
+//---------------------------------------------------------------------------------------- 
+
+
+
+
+
+
+
+
+//INSTRUCTION DECODE STEP
+//--------------------------------------------------------------------------------------
+    //Register module declaration
+    //control module declaration
+
     
     // Reading in the opcode and determining instruction type
     always @(posedge clk or negedge rst_n)
@@ -101,41 +118,80 @@ module mips_processor(clk, rst_n, instr, pc_inp, pc_out, wr_dat, wr_reg
             funct       <= instr_reg[ 5: 0];
             immediate   <= instr_reg[15: 0]; 
         end
-    end
-       
+    end    
+    
+    assign immed_ext = {16{immediate[15]}};
+//--------------------------------------------------------------------------------------
+    
+    
+    
+    
+    
+    
+    
+    
+//EXECUTE STEP
+//--------------------------------------------------------------------------------------    
+    
 
     
-  /*  // R type instructions (opcode = 6'd0)
-    always @(posedge clk or negedge rst_n)
+    assign immed_shift = immed_ext << 2;
+    
+    always @(posedge clk)
     begin
-        if(!rst_n)
-        else if(op_code == 6'd0)
-        begin
-            
-        end
-    end*/
+        pc_reg[2] <=  pc_reg[1] + immed_shift;
+    end
+    
+    //mux leading to ALU
+    //assign mux_alu = (ALUSrc == 1'b0) ? read_data2:         //Need to define ALUSrc and read_data2
+    //                 immed_ext;
+    
+    //ALU declaration
+    //ALU control declaration
     
     
+    //Register Destination Mux
+    //assign mux_RegDst = (RegDst == 1'b0) ? instruction[20:16]:
+    //                    instruction[15:11];
     
-    
-    
-    
- //Instruction Fetch Step
+//-------------------------------------------------------------------------------------- 
  
  
- //Instruction Decode Step
-    //Register module declaration
-    //control module declaration
-    wire                    immed_ext;              //sign extended immediate value
+ 
+ 
+ 
+ 
+ 
+ 
+//MEMORY STEP
+//--------------------------------------------------------------------------------------
+
+    //assign branch_out = Branch & zero_reg;        //define branch_out and zero_reg
+    
+    //Declare memory in test bench. Change outputs to address and wr_data in this module
+
+//--------------------------------------------------------------------------------------
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+//WRITEBACK STEP
+//--------------------------------------------------------------------------------------
+    //POSSIBLY DEFINE MUX IN TESTBENCH
     
     
- //Execute Step
- 
- 
- //Memory Step
- 
- 
- //Writeback Step
+    //Write back mux
+    //assign mux_wb = (MemtoReg == 1'b0) ? read_data:
+    //                address;
+    
+    //step completed within registers.v sub-module
+    
+//--------------------------------------------------------------------------------------
 
 endmodule
 
