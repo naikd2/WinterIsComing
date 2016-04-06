@@ -1,5 +1,5 @@
-
-**** 03/28/16 13:17:36 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
+
+**** 04/06/16 16:41:05 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
 
  ** Profile: "SCHEMATIC1-3phase power"  [ H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\3
 
@@ -32,15 +32,15 @@
 **** INCLUDING SCHEMATIC1.net ****
 * source 3PHASE CIRCUIT
 V_VSa         N00214 0  
-+SIN 0 -99 -99 0 0 0
++SIN 0 63.5085V 60Hz 0 0 0
 V_VSc         N00271 0  
-+SIN 0 -99 -99 0 0 +120deg
++SIN 0 63.5085V 60Hz 0 0 +120deg
 V_VSb         N00812 0  
-+SIN 0 -99 -99 0 0 -120deg
++SIN 0 63.5085V 60Hz 0 0 -120deg
 L_LSynchB         N00812 N07164  4.1484mH  
 L_LSynchA         N00214 N07160  4.1484mH  
 L_LSynchC         N00271 N07211  4.1484mH  
-R_RLine         N04779 N01314  1 TC=0,0 
+R_RLine         N04779 N01314  2.5 TC=0,0 
 L_LLine         N01314 N05645  10mH  
 C_half_CLine         N07258 N04779  50uF  TC=0,0 
 C_half_CLine2         N07258 N05645  50uF  TC=0,0 
@@ -50,33 +50,33 @@ D_D11         N07258 N07211 D1N1190
 D_D12         N07164 N04779 D1N1190 
 D_D13         N07160 N04779 D1N1190 
 D_D14         N07258 N07160 D1N1190 
-X_S1    N08900 0 N08922 N05645 SCHEMATIC1_S1 
+X_S1    N08900 0 N05645 N09432 SCHEMATIC1_S1 
 V_V1         N08900 0  
 +PULSE 0 1 1u 1u 1u 8.33ms 16.66ms
-D_D15         N05645 N08922 D1N1190 
+D_D15         N09432 N05645 D1N1190 
 V_V2         N10017 0  
 +PULSE 0 1 8.33ms 1u 1u 8.33ms 16.66ms
-X_S2    N10017 0 N05645 N10087 SCHEMATIC1_S2 
-D_D16         N10087 N05645 D1N1190 
-X_S4    N11336 0 N05645 N10087 SCHEMATIC1_S4 
-D_D17         N05645 N08922 D1N1190 
+X_S2    N10017 0 N09432 N07258 SCHEMATIC1_S2 
+D_D16         N07258 N09432 D1N1190 
+X_S4    N11336 0 N11234 N07258 SCHEMATIC1_S4 
+D_D17         N11234 N05645 D1N1190 
 V_V4         N11336 0  
-+PULSE 0 1 -99 1u 1u -99 -99
++PULSE 0 1 13.88ms 1u 1u 8.33ms 16.66ms
 V_V3         N11172 0  
 +PULSE 0 1 5.55ms 1u 1u 8.33ms 16.66ms
-X_S3    N11172 0 N08922 N05645 SCHEMATIC1_S3 
-D_D18         N10087 N05645 D1N1190 
-D_D20         N10087 N05645 D1N1190 
-X_S6    N12018 0 N05645 N10087 SCHEMATIC1_S6 
+X_S3    N11172 0 N05645 N11234 SCHEMATIC1_S3 
+D_D18         N07258 N11234 D1N1190 
+D_D20         N07258 N11916 D1N1190 
+X_S6    N12018 0 N11916 N07258 SCHEMATIC1_S6 
 V_V5         N11854 0  
-+PULSE 0 1 -99 1u 1u -99 -99
-X_S5    N11854 0 N08922 N05645 SCHEMATIC1_S5 
-D_D19         N05645 N08922 D1N1190 
++PULSE 0 1 11.1ms 1u 1u 8.33ms 16.66ms
+X_S5    N11854 0 N05645 N11916 SCHEMATIC1_S5 
+D_D19         N11916 N05645 D1N1190 
 V_V6         N12018 0  
-+PULSE 0 1 -99 1u 1u -99 -99
-R_RLoadA         0 N05645  5 TC=0,0 
-R_RLoadB         N05645 0  5 TC=0,0 
-R_RLoadC         0 N05645  5 TC=0,0 
++PULSE 0 1 2.77ms 1u 1u 8.33ms 16.66ms
+R_RLoadA         0 N09432  5 TC=0,0 
+R_RLoadB         N11234 0  5 TC=0,0 
+R_RLoadC         0 N11916  5 TC=0,0 
 
 .subckt SCHEMATIC1_S1 1 2 3 4  
 S_S1         3 4 1 2 _S1
@@ -117,7 +117,7 @@ RS_S5         1 2 1G
 **** RESUMING "3phase power.cir" ****
 .END
 
-**** 03/28/16 13:17:36 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
+**** 04/06/16 16:41:05 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
 
  ** Profile: "SCHEMATIC1-3phase power"  [ H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\3
 
@@ -143,7 +143,7 @@ RS_S5         1 2 1G
           VJ     .7          
 
 
-**** 03/28/16 13:17:36 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
+**** 04/06/16 16:41:05 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
 
  ** Profile: "SCHEMATIC1-3phase power"  [ H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\3
 
@@ -169,23 +169,55 @@ RS_S5         1 2 1G
          VON    1               1            
         VOFF    0               0            
 
-
-ERROR(ORPSIM-15667): Pulse Delay must be >= 0 for V_V4.
-
-WARNING(ORPSIM-15451): Pulse Width must be >= 0 for V_V4. Running simulation with pulse width set as 0
-
-ERROR(ORPSIM-15667): Pulse Delay must be >= 0 for V_V5.
-
-WARNING(ORPSIM-15451): Pulse Width must be >= 0 for V_V5. Running simulation with pulse width set as 0
-
-ERROR(ORPSIM-15667): Pulse Delay must be >= 0 for V_V6.
-
-WARNING(ORPSIM-15451): Pulse Width must be >= 0 for V_V6. Running simulation with pulse width set as 0
-
-
-          JOB ABORTED
 
-**** 03/28/16 13:17:36 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
+**** 04/06/16 16:41:05 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
+
+ ** Profile: "SCHEMATIC1-3phase power"  [ H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\3
+
+
+ ****     INITIAL TRANSIENT SOLUTION       TEMPERATURE =   27.000 DEG C
+
+
+******************************************************************************
+
+
+
+ NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE
+
+
+(N00214)    0.0000 (N00271)   55.0000 (N00812)  -55.0000 (N01314)   54.7840     
+
+(N04779)   54.7870 (N05645)   54.7840 (N07160)    0.0000 (N07164)  -55.0000     
+
+(N07211)   55.0000 (N07258)  -54.7870 (N08900)    0.0000 (N09432)-66.24E-09     
+
+(N10017)    0.0000 (N11172)    0.0000 (N11234)-66.24E-09 (N11336)    0.0000     
+
+(N11854)    0.0000 (N11916)-66.24E-09 (N12018)    0.0000 
+
+
+
+
+    VOLTAGE SOURCE CURRENTS
+    NAME         CURRENT
+
+    V_VSa        1.582E-10
+    V_VSc       -2.647E-03
+    V_VSb        2.647E-03
+    V_V1         0.000E+00
+    V_V2         0.000E+00
+    V_V4         0.000E+00
+    V_V3         0.000E+00
+    V_V5         0.000E+00
+    V_V6         0.000E+00
+
+    TOTAL POWER DISSIPATION   2.91E-01  WATTS
+
+
+
+          JOB CONCLUDED
+
+**** 04/06/16 16:41:05 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
 
  ** Profile: "SCHEMATIC1-3phase power"  [ H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\3
 
@@ -197,5 +229,5 @@ WARNING(ORPSIM-15451): Pulse Width must be >= 0 for V_V6. Running simulation wit
 
 
 
-  Total job time                    =         .38
+  Total job time (using Solver 1)   =        2.31
 

@@ -94,21 +94,21 @@
         (Placement "44 0 1 -1 -1 -8 -30 0 200 0 556"))
       (Tab 0))
     (Doc
-      (Type "TextFile")
-      (Frame
-        (Placement "44 0 1 -1 -1 -8 -30 125 1748 125 664"))
-      (Path
-         "H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\schematic1.net")
-      (Scroll "0"))
-    (Doc
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 2 3 -1 -1 -8 -30 50 1669 50 585")
-        (Scroll "838 16")
+        (Scroll "839 16")
         (Zoom "134")
         (Occurrence "/"))
       (Path
          "H:\WINTERISCOMING\SPRING2016\POWER SYSTEMS\PROJECT3\3PHASE CIRCUIT.DSN")
       (Schematic "SCHEMATIC1")
-      (Page "PAGE1")))
+      (Page "PAGE1"))
+    (Doc
+      (Type "TextFile")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -30 125 1748 125 664"))
+      (Path
+         "H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\schematic1.net")
+      (Scroll "0")))
   (MPSSessionName "caok1"))
