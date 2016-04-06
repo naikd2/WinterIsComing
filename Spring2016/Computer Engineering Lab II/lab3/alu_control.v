@@ -20,7 +20,7 @@ module alu_control(ALUOp, funct, operation
     
     
     assign operation =  (ALUOp == 2'b00)                                ? 3'b010:
-                        (ALUOp == 2'b01;)                               ? 3'b110:
+                        (ALUOp == 2'b01)                                ? 3'b110:
                         (ALUOp[1] == 1'b1 && funct[3:0] == 4'b0000)     ? 3'b010:
                         (ALUOp[1] == 1'b1 && funct[3:0] == 4'b0010)     ? 3'b110:
                         (ALUOp[1] == 1'b1 && funct[3:0] == 4'b0100)     ? 3'b000:

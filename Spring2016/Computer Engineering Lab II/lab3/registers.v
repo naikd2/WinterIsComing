@@ -8,7 +8,7 @@
 
 `timescale 1ns / 1ps
 
-module registers(clk, rst_n, rs, rt, wr_reg, wr_dat, read_dat1, read_dat2
+module registers(clk, rst_n, rs, rt, wr_reg, wr_dat, read_dat1, read_dat2, RegWrite
     );
     
     input                       clk;
@@ -20,12 +20,12 @@ module registers(clk, rst_n, rs, rt, wr_reg, wr_dat, read_dat1, read_dat2
     input           [31:0]      wr_dat;
     input                       RegWrite;               //Control bit, specifies if to write to register
     
-    output reg                  read_dat1;
-    output reg                  read_dat2;
+    output reg      [31:0]      read_dat1;
+    output reg      [31:0]      read_dat2;
     
     //Registers
     
-    localparam                  zero = 1'd0;            //zero constant, Value 0
+    localparam                  zero = 32'd0;            //zero constant, Value 0
     
     //Values for function and expression results
     reg             [31:0]      v0;                     //Value 2
@@ -60,7 +60,7 @@ module registers(clk, rst_n, rs, rt, wr_reg, wr_dat, read_dat1, read_dat2
     reg             [31:0]      s7;                     //Value 23
 
     
-    always @(negedge rst_n)
+  /*  always @(negedge rst_n)
     begin
         if(!rst_n)
         begin
@@ -93,7 +93,7 @@ module registers(clk, rst_n, rs, rt, wr_reg, wr_dat, read_dat1, read_dat2
             s6 <= 32'd0;
             s7 <= 32'd0;
         end
-    end
+    end*/
     
     always @(*)
     begin
@@ -159,9 +159,39 @@ module registers(clk, rst_n, rs, rt, wr_reg, wr_dat, read_dat1, read_dat2
     end
     
     //Part of the write back stage
-    always @(posedge clk)
+    always @(posedge clk or negedge rst_n)
     begin
-        if(RegWrite == 1'b1)
+        if(!rst_n)
+        begin
+            v0 <= 32'd0;
+            v1 <= 32'd0;
+            
+            a0 <= 32'd0;
+            a1 <= 32'd0;
+            a2 <= 32'd0;
+            a3 <= 32'd0;
+            
+            t0 <= 32'd0;
+            t1 <= 32'd0;
+            t2 <= 32'd0;
+            t3 <= 32'd0;
+            t4 <= 32'd0;
+            t5 <= 32'd0;
+            t6 <= 32'd0;
+            t7 <= 32'd0;
+            t8 <= 32'd0;
+            t9 <= 32'd0;
+            
+            s0 <= 32'd0;
+            s1 <= 32'd0;
+            s2 <= 32'd0;
+            s3 <= 32'd0;
+            s4 <= 32'd0;
+            s5 <= 32'd0;
+            s6 <= 32'd0;
+            s7 <= 32'd0;
+        end
+        else if(RegWrite == 1'b1)
         begin
             case(wr_reg)
                 2:  v0 <= wr_dat;

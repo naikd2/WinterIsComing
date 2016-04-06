@@ -12,9 +12,9 @@
 module control(op_code, RegDst, ALUSrc, MemtoReg, RegWrite, MemRead, MemWrite, Branch, ALUOp1, ALUOp0
     );
     
-    input                       op_code;
-    
-    //Control Reg Values
+    input           [5:0]       op_code;
+                                    
+    //Control Reg Values            
     output reg                  RegDst;
     output reg                  ALUSrc;
     output reg                  MemtoReg;
