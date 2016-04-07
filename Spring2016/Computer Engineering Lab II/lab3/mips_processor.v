@@ -126,7 +126,7 @@ module mips_processor(clk, rst_n, instr, pc_out, wr_dat, wr_reg
     
 
 
-    always @(*)
+    always @(posedge clk or negedge rst_n)
     begin
         if(!rst_n)
         begin
@@ -137,6 +137,10 @@ module mips_processor(clk, rst_n, instr, pc_out, wr_dat, wr_reg
         else if(PCSrc == 1'b1)                       //if select bit is 1
             pc_out <= pc_reg[2];
     end
+  
+  
+
+    
     
     always @(*)
     begin
