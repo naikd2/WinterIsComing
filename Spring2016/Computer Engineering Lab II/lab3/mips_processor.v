@@ -17,8 +17,8 @@ module mips_processor(clk, rst_n, instr, pc_out, wr_dat, wr_reg
     input           [31:0]      instr;              // Instruction word
 
     output reg      [31:0]      pc_out;             // Output PC value    
-    output reg      [31:0]      wr_dat;             // Write data
-    output reg      [4:0]       wr_reg;             // Write register
+    output wire     [31:0]      wr_dat;             // Write data
+    output wire     [4:0]       wr_reg;             // Write register
     
                         
                         
@@ -129,10 +129,12 @@ module mips_processor(clk, rst_n, instr, pc_out, wr_dat, wr_reg
     always @(*)
     begin
         if(!rst_n)
+        begin
             pc_out <= 32'd0;
-        else if (PCSrc == 1'b0)     //if select bit is 0
+        end
+        else if(PCSrc == 1'b0)     //if select bit is 0
             pc_out <= pc_reg[0];
-        else                        //if select bit is 1
+        else if(PCSrc == 1'b1)                       //if select bit is 1
             pc_out <= pc_reg[2];
     end
     
@@ -368,6 +370,8 @@ module mips_processor(clk, rst_n, instr, pc_out, wr_dat, wr_reg
     
 //--------------------------------------------------------------------------------------
 
+    assign wr_dat = wr_data_reg[1];
+    assign wr_reg = mux_wb;
 
 
 endmodule
