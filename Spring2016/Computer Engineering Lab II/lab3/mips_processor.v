@@ -18,59 +18,98 @@ module mips_processor(clk, rst_n, instr, pc_out, wr_dat, wr_reg
 
     output reg      [31:0]      pc_out;             // Output PC value    
     output reg      [31:0]      wr_dat;             // Write data
-    output reg                  wr_reg;             // Write register
+    output reg      [4:0]       wr_reg;             // Write register
     
-    reg             [ 5:0]      op_code;
-    
-    
-    
-    
-    
+                        
+                        
+                            
+                                
+                                        
+                                        
     //Instruction decode variables
-    reg             [ 4:0]      rs;
-    reg             [ 4:0]      rt;
-    reg             [ 4:0]      rd;
-    reg             [ 4:0]      shamt;
-    reg             [ 5:0]      funct;
+    wire            [ 5:0]      op_code;
+    wire            [ 4:0]      rs;
+    wire            [ 4:0]      rt;
+    wire            [ 4:0]      rd;
+    wire            [ 4:0]      shamt;
+    wire            [ 5:0]      funct;
     
-    reg             [15:0]      immediate;
+    wire            [15:0]      immediate;
     
     
     wire                        RegDst;
     wire                        ALUSrc;
-    wire                        MemtoReg;
-    wire                        RegWrite;
-    wire            [1:0]       MemRead;
-    wire            [1:0]       MemWrite;
-    wire            [1:0]       Branch;
     wire                        ALUOp1;
     wire                        ALUOp0;
     
+    wire                        MemtoReg;
+    wire                        RegWrite;
+                        
+    wire                        MemRead;
+    wire                        MemWrite;
+    wire                        Branch;
+    
+    
+    //ID variables
+    wire            [31:0]      read_data1;
+    wire            [31:0]      read_data2;
+    wire            [31:0]      immed_ext;          //sign extended immediate value
     
     //Execute variables
     wire            [2:0]       alu_operation;
-    wire            [31:0]      alu_result_reg;
-    wire                        alu_zero_reg;
+    wire            [4:0]       mux_RegDst;
+    wire            [31:0]      pc_adder;
+    wire            [31:0]      mux_alu_data;
     
+    wire                        alu_zero;
+    wire            [31:0]      alu_result;
+                        
+                            
     //Mem variables
     wire                        PCSrc;
-    wire                        mem_read_data;
+    wire            [31:0]      mem_read_data;
+    reg             [31:0]      mem_read_data_reg;
+    
+    
+    
+    //WB variables
+    wire            [31:0]      mux_wb;
     
     // Pipeline Registers
-    reg             [31:0]      pc_reg[0:2];
+    
+    reg             [31:0]      pc_reg[0:3];
     reg             [31:0]      instr_reg;
     
+    
+    // control pipeline registers
+    reg                         RegDst_reg;
+    reg                         ALUSrc_reg;
+    reg                         ALUOp1_reg;
+    reg                         ALUOp0_reg;
+       
+    reg                         Branch_reg[1:0];
+    reg                         MemRead_reg[1:0];
+    reg                         MemWrite_reg[1:0];
+    
+    reg                         RegWrite_reg[0:2];
+    reg                         MemtoReg_reg[0:2];
+    
+    
 
-    wire            [31:0]      read_data1_reg;
-    wire            [31:0]      read_data2_reg0;
-    wire            [31:0]      read_data2_reg1;
-    wire            [31:0]      immed_ext;          //sign extended immediate value
+    reg             [31:0]      read_data1_reg;
+    reg             [31:0]      read_data2_reg[0:1];
+    reg             [31:0]      immed_ext_reg;
+    reg             [ 4:0]      rt_reg;
+    reg             [ 4:0]      rd_reg;
+    
     wire            [31:0]      immed_shift;
     
+    reg                         alu_zero_reg;
+    reg             [31:0]      alu_result_reg[0:1];
     
-    wire            [1:0]       Branch_reg;
-    wire            [1:0]       MemRead_reg;
-    wire            [1:0]       MemWrite_reg;
+    reg             [ 4:0]      wr_data_reg[0:1];
+    
+    
     
     
 
@@ -87,7 +126,7 @@ module mips_processor(clk, rst_n, instr, pc_out, wr_dat, wr_reg
     
 
 
-    always @(posedge clk or negedge rst_n)
+    always @(*)
     begin
         if(!rst_n)
             pc_out <= 32'd0;
@@ -104,15 +143,12 @@ module mips_processor(clk, rst_n, instr, pc_out, wr_dat, wr_reg
     
     
     //IF/ID Registers
-    always @(*)
+    always @(posedge clk)
     begin
         instr_reg <= instr;
-    end
-    
-    always @(*)
-    begin
         pc_reg[1] <= pc_reg[0];
     end
+    
     
     
     
@@ -131,72 +167,75 @@ module mips_processor(clk, rst_n, instr, pc_out, wr_dat, wr_reg
 
     //control module declaration
     control mips_control(
-        .op_code            (op_code),
-        .RegDst             (RegDst),
-        .ALUSrc             (ALUSrc),
-        .MemtoReg           (MemtoReg),
-        .RegWrite           (RegWrite),
-        .MemRead            (MemRead),
-        .MemWrite           (MemWrite),
-        .Branch             (Branch),
-        .ALUOp1             (ALUOp1),
-        .ALUOp0             (ALUOp0)
+        .op_code            (op_code),      //input
+        .RegDst             (RegDst),       //output
+        .ALUSrc             (ALUSrc),       //output
+        .MemtoReg           (MemtoReg),     //output
+        .RegWrite           (RegWrite),     //output
+        .MemRead            (MemRead),      //output
+        .MemWrite           (MemWrite),     //output
+        .Branch             (Branch),       //output
+        .ALUOp1             (ALUOp1),       //output
+        .ALUOp0             (ALUOp0)        //output
     );
     
     
-    // Reading in the opcode and determining instruction type
-    always @(posedge clk)
-    begin
-        op_code     <= instr_reg[31:26];
-        rs          <= instr_reg[25:21];
-        rt          <= instr_reg[20:16];
-        rd          <= instr_reg[15:11];
-        shamt       <= instr_reg[10: 6];
-        funct       <= instr_reg[ 5: 0];
-        immediate   <= instr_reg[15: 0]; 
 
-    end    
-    
+    assign op_code      =   instr_reg[31:26];
+    assign rs           =   instr_reg[25:21];
+    assign rt           =   instr_reg[20:16];
+    assign rd           =   instr_reg[15:11];
+    assign shamt        =   instr_reg[10: 6];
+    assign funct        =   instr_reg[ 5: 0];
+    assign immediate    =   instr_reg[15: 0]; 
     
     //Register module declaration
     registers mips_registers(
-        .clk                (clk),
-        .rst_n              (rst_n),
-        .rs                 (rs),
-        .rt                 (rt),
-        .wr_reg             (mux_RegDst),
-        .wr_dat             (mux_wb),
-        .read_dat1          (read_data1),
-        .read_dat2          (read_data2)
+        .clk                (clk),              //input
+        .rst_n              (rst_n),            //input
+        .rs                 (rs),               //input
+        .rt                 (rt),               //input
+        .wr_reg             (mux_RegDst),       //input
+        .wr_dat             (mux_wb),           //input
+        .read_dat1          (read_data1),       //output
+        .read_dat2          (read_data2),       //output
+        .RegWrite           (RegWrite_reg[2])   //input
     );
     
     //sign-extend immediate value
-    assign immed_ext = {16{immediate[15]}};
+    assign immed_ext = { {16{immediate[15]}}, immediate[15:0]};
     
     
     
     //ID/EX Pipeline Register values
     
-    always @(*)
+    always @(posedge clk)
     begin
-        pc_reg[2] <= pc_reg[1];
+       //Ex
+        RegDst_reg          <= RegDst;
+        ALUSrc_reg          <= ALUSrc;
+        ALUOp1_reg          <= ALUOp1;
+        ALUOp0_reg          <= ALUOp0;
+        
+        //Mem
+        Branch_reg[0]       <= Branch;
+        MemRead_reg[0]      <= MemRead;
+        MemWrite_reg[0]     <= MemWrite;
+        
+        //WB
+        RegWrite_reg[0]     <= RegWrite;
+        MemtoReg_reg[0]     <= MemtoReg;
+        
+        
+        pc_reg[2]           <= pc_reg[1];
+        read_data1_reg      <= read_data1;
+        read_data2_reg[0]   <= read_data2;
+        immed_ext_reg       <= immed_ext;
+        rt_reg              <= rt;
+        rd_reg              <= rd;
     end
     
-    assign read_data1_reg = read_data1;
-    assign read_data2_reg = read_data2;
-    assign immed_ext_reg = immed_ext;
-    assign rt_reg = rt;                     //[20:16]
-    assign rd_reg = rd;                     //[15:11]
-    
-    assign RegDst_reg = RegDst;
-    assign ALUSrc_reg = ALUSrc;
-    assign ALUOp1_reg = ALUOp1;
-    assign ALUOp0_reg = ALUOp0;
-    assign Branch_reg[0] = Branch;
-    assign MemRead_reg[0] = MemRead;
-    assign MemWrite_reg[0] = MemWrite;
-    assign RegWrite_reg = RegWrite;
-    assign MemtoReg_reg = MemtoReg;
+
     
 //--------------------------------------------------------------------------------------
     
@@ -212,51 +251,62 @@ module mips_processor(clk, rst_n, instr, pc_out, wr_dat, wr_reg
     
 
     
-    assign immed_shift = immed_ext << 2;
+    assign immed_shift = immed_ext_reg << 2;
+    assign pc_adder = pc_reg[2] + immed_shift;
     
-    always @(posedge clk)
-    begin
-        pc_reg[2] <=  pc_reg[1] + immed_shift;
-    end
+
     
     //mux leading to ALU
-    //assign mux_alu = (ALUSrc == 1'b0) ? read_data2:         //Need to define ALUSrc and read_data2
-    //                 immed_ext;
+    assign mux_alu_data = (ALUSrc_reg == 1'b0) ?    read_data2_reg[0]:         //Need to define ALUSrc and read_data2
+                                                    immed_ext_reg;
     
     
     
     //ALU control declaration
     alu_control mips_aluControl(
-        .ALUOp              ({ALUOp1_reg, ALUOp0_reg}),
-        .funct              (immed_ext[5:0]),
-        .operation          (alu_operation)
+        .ALUOp              ({ALUOp1_reg, ALUOp0_reg}),     //input
+        .funct              (immed_ext[5:0]),               //input
+        .operation          (alu_operation)                 //output
     );
     
-    assign mux_alu_b = (ALUSrc_reg == 1'b0) ?   read_data2_reg:
-                                                immed_ext;
+
     
     //Probably need to redefine this sub-module and clock it
     //ALU declaration
     alu mips_alu(
-        .a                  (read_data1_reg),
-        .b                  (mux_alu_b),
-        .operation          (alu_operation),
-        .result             (alu_result_reg),
-        .zero               (alu_zero_reg)                       
+        .a                  (read_data1_reg),               //input
+        .b                  (mux_alu_data),                    //input
+        .operation          (alu_operation),                //input
+        .result             (alu_result),                   //output
+        .zero               (alu_zero)                      //output
     );
     
     
     //Register Destination Mux
-    assign mux_RegDst = (RegDst == 1'b0) ? rt_reg:
-                                           rd_reg;
+    assign mux_RegDst = (RegDst_reg == 1'b0) ? rt_reg:
+                                               rd_reg;
                                            
                                            
     // Execute Pipeline registers
+    always @(posedge clk)
+    begin
+        Branch_reg[1] <= Branch_reg[0];
+        MemRead_reg[1] <= MemRead_reg[0];
+        MemWrite_reg[1] <= MemWrite_reg[0];
+        
+        RegWrite_reg[1] <= RegWrite_reg[0];
+        MemtoReg_reg[1] <= MemtoReg_reg[0];
+        
+        pc_reg[3] <=  pc_adder;
+        
+        alu_zero_reg <= alu_zero;
+        alu_result_reg[0] <= alu_result;
+        
+        read_data2_reg[1] <= read_data2_reg[0];
+        
+        wr_data_reg[0] <= mux_RegDst;
+    end
     
-    assign Branch_reg[1] = Branch_reg[0];
-    assign MemRead_reg[1] = MemRead_reg[0];
-    assign MemWrite_reg[1] = MemWrite_reg[0];
-    assign read_data2_reg1 = read_data2_reg0;
     
 //-------------------------------------------------------------------------------------- 
  
@@ -275,15 +325,25 @@ module mips_processor(clk, rst_n, instr, pc_out, wr_dat, wr_reg
     //memory is declared here. easier to connect wires, then declaring memory in test bench (wr_data, wr_reg)
     //clk, rst_n, MemRead, MemWrite, address, write_data, read_data
     data_memory mips_data_memory(
-        .clk                (clk),
-        .rst_n              (rst_n),
-        .MemRead            (MemRead_reg[1]),
-        .MemWrite           (MemWrite_reg[1]),
-        .address            (alu_result_reg),
-        .write_data         (read_data2_reg1),
-        .read_data          (mem_read_data)
+        .clk                (clk),                      //input
+        .rst_n              (rst_n),                    //input
+        .MemRead            (MemRead_reg[1]),           //input
+        .MemWrite           (MemWrite_reg[1]),          //input
+        .address            (alu_result_reg[0]),        //input
+        .write_data         (read_data2_reg[1]),        //input
+        .read_data          (mem_read_data)             //output
     );
 
+    always @(posedge clk)
+    begin
+        RegWrite_reg[2] <= RegWrite_reg[1];
+        MemtoReg_reg[2] <= MemtoReg_reg[1];
+    
+        mem_read_data_reg <= mem_read_data;
+        alu_result_reg[1] <= alu_result_reg[0];
+        
+        wr_data_reg[1] <= wr_data_reg[0];
+    end
     
 //--------------------------------------------------------------------------------------
  
@@ -301,12 +361,14 @@ module mips_processor(clk, rst_n, instr, pc_out, wr_dat, wr_reg
     
     
     //Write back mux
-    assign mux_wb = (MemtoReg == 1'b0) ? mem_read_data:
-                                         alu_result_reg;
+    assign mux_wb = (MemtoReg_reg[2] == 1'b0) ? mem_read_data_reg:
+                                            alu_result_reg[1];
     
     //step completed within registers.v sub-module
     
 //--------------------------------------------------------------------------------------
+
+
 
 endmodule
 
