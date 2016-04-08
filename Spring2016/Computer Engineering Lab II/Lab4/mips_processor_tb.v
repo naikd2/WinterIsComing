@@ -68,7 +68,7 @@ module mips_processor_tb;
 		  //SLT $s4 $t8 $t9
         instr_mem[16] = 32'h0319A02A;           //slt == 1
 																//t8 = 24 | t9 = 25	| s4 = 20
-			  instr_mem[20] = 32'h12D70002;		//beq													
+			  instr_mem[20] = 32'h12D70008;		//beq													
 		  //LW $t2 0x0000 $t0	
 		  instr_mem[24] = 32'h8d0a0000;		//LW $t2 0x0000 $t0 | $t2 <- memory[$t0]
 		  instr_mem[28] = 32'hADC90000;		//SW

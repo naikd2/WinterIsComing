@@ -33,7 +33,8 @@ module alu(a, b, operation, result, zero
                     (operation == SLT) ? a < b:
                     result;
                     
-    assign zero =   (result == 32'd0)  ?  1'b0:
+    assign zero =   (result == 32'd0)  ?  1'b1:
+						  (result != 32'd0)  ?  1'b0:
                     zero;
     
 
