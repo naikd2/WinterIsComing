@@ -1,5 +1,5 @@
 
-**** 04/06/16 16:41:05 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
+**** 04/11/16 13:40:53 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
 
  ** Profile: "SCHEMATIC1-3phase power"  [ H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\3
 
@@ -18,11 +18,11 @@
 *Libraries: 
 * Profile Libraries :
 * Local Libraries :
-* From [PSPICE NETLIST] section of H:\cdssetup\OrCAD_PSpice/16.6.0/PSpice.ini file:
+* From [PSPICE NETLIST] section of C:\SPB_Data\cdssetup\OrCAD_PSpice/16.6.0/PSpice.ini file:
 .lib "nom.lib" 
 
 *Analysis directives: 
-.TRAN  0 0.575 0.5 0.00001 
+.TRAN  0 1.05 1 0.00001 
 .OPTIONS ADVCONV
 .PROBE64 V(alias(*)) I(alias(*)) W(alias(*)) D(alias(*)) NOISE(alias(*)) 
 .INC "..\SCHEMATIC1.net" 
@@ -32,11 +32,11 @@
 **** INCLUDING SCHEMATIC1.net ****
 * source 3PHASE CIRCUIT
 V_VSa         N00214 0  
-+SIN 0 63.5085V 60Hz 0 0 0
++SIN 0 89.814V 60Hz 0 0 0
 V_VSc         N00271 0  
-+SIN 0 63.5085V 60Hz 0 0 +120deg
++SIN 0 89.814V 60Hz 0 0 +120deg
 V_VSb         N00812 0  
-+SIN 0 63.5085V 60Hz 0 0 -120deg
++SIN 0 89.814V 60Hz 0 0 -120deg
 L_LSynchB         N00812 N07164  4.1484mH  
 L_LSynchA         N00214 N07160  4.1484mH  
 L_LSynchC         N00271 N07211  4.1484mH  
@@ -117,7 +117,7 @@ RS_S5         1 2 1G
 **** RESUMING "3phase power.cir" ****
 .END
 
-**** 04/06/16 16:41:05 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
+**** 04/11/16 13:40:53 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
 
  ** Profile: "SCHEMATIC1-3phase power"  [ H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\3
 
@@ -143,7 +143,7 @@ RS_S5         1 2 1G
           VJ     .7          
 
 
-**** 04/06/16 16:41:05 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
+**** 04/11/16 13:40:53 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
 
  ** Profile: "SCHEMATIC1-3phase power"  [ H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\3
 
@@ -170,7 +170,7 @@ RS_S5         1 2 1G
         VOFF    0               0            
 
 
-**** 04/06/16 16:41:05 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
+**** 04/11/16 13:40:53 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
 
  ** Profile: "SCHEMATIC1-3phase power"  [ H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\3
 
@@ -185,15 +185,15 @@ RS_S5         1 2 1G
  NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE
 
 
-(N00214)    0.0000 (N00271)   55.0000 (N00812)  -55.0000 (N01314)   54.7840     
+(N00214)    0.0000 (N00271)   77.7810 (N00812)  -77.7810 (N01314)   77.5540     
 
-(N04779)   54.7870 (N05645)   54.7840 (N07160)    0.0000 (N07164)  -55.0000     
+(N04779)   77.5580 (N05645)   77.5540 (N07160)-7.105E-15 (N07164)  -77.7810     
 
-(N07211)   55.0000 (N07258)  -54.7870 (N08900)    0.0000 (N09432)-66.24E-09     
+(N07211)   77.7810 (N07258)  -77.5580 (N08900)    0.0000 (N09432)-69.77E-09     
 
-(N10017)    0.0000 (N11172)    0.0000 (N11234)-66.24E-09 (N11336)    0.0000     
+(N10017)    0.0000 (N11172)    0.0000 (N11234)-69.77E-09 (N11336)    0.0000     
 
-(N11854)    0.0000 (N11916)-66.24E-09 (N12018)    0.0000 
+(N11854)    0.0000 (N11916)-69.77E-09 (N12018)    0.0000 
 
 
 
@@ -201,9 +201,9 @@ RS_S5         1 2 1G
     VOLTAGE SOURCE CURRENTS
     NAME         CURRENT
 
-    V_VSa        1.582E-10
-    V_VSc       -2.647E-03
-    V_VSb        2.647E-03
+    V_VSa        3.859E-10
+    V_VSc       -3.180E-03
+    V_VSb        3.180E-03
     V_V1         0.000E+00
     V_V2         0.000E+00
     V_V4         0.000E+00
@@ -211,13 +211,13 @@ RS_S5         1 2 1G
     V_V5         0.000E+00
     V_V6         0.000E+00
 
-    TOTAL POWER DISSIPATION   2.91E-01  WATTS
+    TOTAL POWER DISSIPATION   4.95E-01  WATTS
 
 
 
           JOB CONCLUDED
 
-**** 04/06/16 16:41:05 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
+**** 04/11/16 13:40:53 ***** PSpice 16.6.0 (October 2012) ***** ID# 0 ********
 
  ** Profile: "SCHEMATIC1-3phase power"  [ H:\WinterIsComing\Spring2016\Power Systems\project3\3phase circuit-pspicefiles\schematic1\3
 
@@ -229,5 +229,5 @@ RS_S5         1 2 1G
 
 
 
-  Total job time (using Solver 1)   =        2.31
+  Total job time (using Solver 1)   =        3.35
 

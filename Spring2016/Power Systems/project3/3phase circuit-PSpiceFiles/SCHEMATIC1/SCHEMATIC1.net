@@ -1,10 +1,10 @@
 * source 3PHASE CIRCUIT
 V_VSa         N00214 0  
-+SIN 0 63.5085V 60Hz 0 0 0
++SIN 0 89.814V 60Hz 0 0 0
 V_VSc         N00271 0  
-+SIN 0 63.5085V 60Hz 0 0 +120deg
++SIN 0 89.814V 60Hz 0 0 +120deg
 V_VSb         N00812 0  
-+SIN 0 63.5085V 60Hz 0 0 -120deg
++SIN 0 89.814V 60Hz 0 0 -120deg
 L_LSynchB         N00812 N07164  4.1484mH  
 L_LSynchA         N00214 N07160  4.1484mH  
 L_LSynchC         N00271 N07211  4.1484mH  
