@@ -3,114 +3,161 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h> // for close
+#include <unistd.h> 
 
 #define DISK_NAME "DISK_0.txt"
 #define DISK_SIZE 40960
 
 
-// struct block
-// {
-// 	int nbytes;			// Max Data is 32768
-// 	char filename[256]; 
-// 	struct block *next; 
-// };
-
-// block disk[DISK_SIZE];
 void syncDisk()
 {
 	sync();
 
 }
+
 int openDisk(char *filename, int nbytes)
 {
-
+	/*
+		open and possible create a file
+		returns: a file descriptor 
+		filename: the given pathname for a file
+		flags: 
+			O_CREAT - if file doesn't exist, it will be created
+			O_RDWD - read and write access 
+	*/
 	int fd = open(filename, O_CREAT | O_RDWR );
-	//printf("%d\n", fd);
-
+	if(fd < 0) return 0; 
+	/*
+		given file's size will change to nbytes 
+	*/
 	truncate(filename, nbytes);
+
 	return fd; 
 
 }
 
 int writeBlock(int disk, int blocknum, void *block)
 {
-	//char buffer[10]="vvvvv";
+	/*
+		convert virtual number to logical number 
+	*/
 	blocknum = blocknum * 4096; 
+	/*
+		data type to represent file size 
+	*/
 	off_t offset = blocknum; 
+	/*
+		for the given fd, it positions the file offset
+		SEEK_SET: set by offset bytes, absolute value
+	*/
 	lseek(disk, offset, SEEK_SET);
+	/*
+		writes to the file represented by the fd
+		block: buffer that will be written 
+		4096: size of the buffer in bytes
+	*/
 	int wr = write(disk, block, 4096);
-	// write(disk, buffer, 10);
-	// lseek(disk, 5, SEEK_SET);
-	// char buffer2[10] = "aaaaaaaaaa";
-	// write(disk, buffer2, 10);
 	return wr; 
 
 }
 
 int readBlock(int disk, int blocknum, void *block)
 {
-	//char buffer[4096] = "";
-    int n_char=0;
-	char buffer[4096];
 
-        // //Initially n_char is set to 0 -- errno is 0 by default
-       
-
-        // //Display a prompt to stdout
-        // n_char=write(1, "Enter a word  ", 14);
-
-        // //Use the read system call to obtain 10 characters from stdin
-        // n_char=read(0, buffer, 10);
-        
-
-        // //If read has failed
-
-
-        // //Display the characters read
-        // n_char=write(1,buffer,n_char);
+  	/*
+		convert virtual number to logical number 
+	*/
 	blocknum = blocknum * 4096;
+	/*
+		data type to represent file size 
+	*/
 	off_t offset = blocknum;
+	/*
+		for the given fd, it positions the file offset
+		SEEK_SET: set by offset bytes, absolute value
+	*/
 	lseek(disk, offset, SEEK_SET);
+	/*
+		reads the file represented by the fd
+		block: buffer that will be read into 
+		4096: read up to 4096 bytes 
+	*/
 	int rd = read(disk, block, 4096);
+	/*
+		write read results to stdout for debugging 
+	*/	
 	write(1, block, rd);
-	syncDisk();
+	printf("\n");
 	return rd; 
 
 }
 
 
 
-unsigned long fsize(char* file)
-{
-    FILE * f = fopen(file, "r");
-    fseek(f, 0, SEEK_END);
-    unsigned long len = (unsigned long)ftell(f);
-    fclose(f);
-    return len;
-}
-
 int main()
 {
-	char buf[4096] = "hello world";
-	// void *buf;
-	// buf = str;
-	// Init the disk to zero 
-    // memset(disk, 0, sizeof(block)); 
+
+
 	int disk = 0;
+	int rd = 0;
+	int wr = 0;
 	disk = openDisk(DISK_NAME, DISK_SIZE);
-	printf("SIZE OF DISK: %lu\n", fsize(DISK_NAME));
-	//scanf("%127s", buf);
-	int wr = writeBlock(disk, 0, buf);
+	
 
-	//printf("%d\n",wr);
-	int rd = readBlock(disk, 0, buf);
-	//printf("%d\n",rd);
-	//syncDisk();
+	char buf1[4096] = "BLOCK_ONE";
+	printf("writing block...\n");
+	wr = writeBlock(disk, 0, buf1);
+	printf("reading block...\n");
+	rd = readBlock(disk, 0, buf1);
+	
+	char buf2[4096] = "BLOCK_TWO";
+	printf("writing block...\n");
+	wr = writeBlock(disk, 1, buf2);
+	printf("reading block...\n");
+	rd = readBlock(disk, 1, buf2);
 
+	char buf3[4096] = "BLOCK_THREE";
+	printf("writing block...\n");
+	wr = writeBlock(disk, 2, buf3);
+	printf("reading block...\n");
+	rd = readBlock(disk, 2, buf3);
+
+	char buf4[4096] = "BLOCK_FOUR";
+	printf("writing block...\n");
+	wr = writeBlock(disk, 3, buf4);
+	printf("reading block...\n");
+	rd = readBlock(disk, 3, buf4);
+
+	char buf5[4096] = "BLOCK_FIVE";
+	printf("writing block...\n");
+	wr = writeBlock(disk, 4, buf5);
+	printf("reading block...\n");
+	rd = readBlock(disk, 4, buf5);
+
+	char buf6[4096] = "BLOCK_SIX";
+	printf("writing block...\n");
+	wr = writeBlock(disk, 5, buf6);
+	printf("reading block...\n");
+	rd = readBlock(disk, 5, buf6);
+
+	/*
+		Update Disk with user input
+	*/	
+	char buf[4096];
+	printf("Enter Data to write into BLOCK FOUR:\n");
+	scanf("%4096s", buf);
+	wr = writeBlock(disk, 3, buf);
+	rd = readBlock(disk, 3, buf);
+
+
+	syncDisk();
 	close(disk);
+
     return 0; 
 }
+
+
+
 
 
 
