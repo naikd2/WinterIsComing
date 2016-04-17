@@ -63,7 +63,6 @@ int writeBlock(int disk, int blocknum, void *block)
 
 int readBlock(int disk, int blocknum, void *block)
 {
-
   	/*
 		convert virtual number to logical number 
 	*/
@@ -86,6 +85,7 @@ int readBlock(int disk, int blocknum, void *block)
 	/*
 		write read results to stdout for debugging 
 	*/	
+
 	write(1, block, rd);
 	printf("\n");
 	return rd; 
@@ -143,11 +143,25 @@ int main()
 	/*
 		Update Disk with user input
 	*/	
-	char buf[4096];
-	printf("Enter Data to write into BLOCK FOUR:\n");
-	scanf("%4096s", buf);
-	wr = writeBlock(disk, 3, buf);
-	rd = readBlock(disk, 3, buf);
+	printf("Update Disk\n");	
+	while(1)
+	{	
+		int i = 0;
+		char buf[4096];
+
+		printf("1-5)Edit Block 1-5:\n");
+		printf("6)Exit:\n");
+		scanf("%d", &i);
+
+		if (i==6)
+			break;
+
+		printf("Enter Data to write into Block %d:\n", i);
+		scanf("%4096s", buf);
+		wr = writeBlock(disk, i-1, buf);
+		printf("-----Block %d Read", i);
+		rd = readBlock(disk, i-1, buf);
+	}	
 
 
 	syncDisk();
