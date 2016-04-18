@@ -10,6 +10,12 @@
 #define DISK_SIZE 40960
 
 /*
+	Class 29: Disk Simulation
+	Kevin Cao and Dhruvit Naik
+*/
+
+
+/*
 	openDisk
 	----------------------------
 	opens or creates a disk with nbytes
@@ -219,14 +225,13 @@ int main()
 	while(1)
 	{	
 		int i = 0;
-		char buf[4096];
 
 		printf("1)Write Blocks 1-5:\n");
 		printf("2)Read Blocks 1-5:\n");
-		printf("6)Exit:\n");
+		printf("3)Exit:\n");
 		scanf("%d", &i);
 
-		if (i==6)
+		if (i==3)
 			break;
 
 
@@ -234,6 +239,8 @@ int main()
 		{
 			while(1)
 			{
+				i = 0;
+				char buf[4096] = "";
 				printf("1-5)Choose what Block to write (1-5):\n");
 				printf("6)Back:\n");
 				scanf("%d", &i);
@@ -251,6 +258,8 @@ int main()
 		{
 			while(1)
 			{
+				i = 0;
+				char buf[4096] = "";
 				printf("1-5)Choose what Block to read (1-5):\n");
 				printf("6)Back:\n");
 				scanf("%d", &i);
@@ -264,20 +273,6 @@ int main()
 
 
 		}
-		// printf("Enter Data to write into Block %d:\n", i);
-		// scanf("%4096s", buf);
-		// wr = writeBlock(disk, i-1, buf);
-		// printf("-----Block %d Read", i);
-		// rd = readBlock(disk, i-1, buf);
-
-
-
-
-
-
-
-
-
 
 	}	
 
