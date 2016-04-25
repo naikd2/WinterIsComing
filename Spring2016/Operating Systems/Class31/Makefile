@@ -3,7 +3,7 @@ all: clean build execute
 clean:
 	
 	rm -f *.out 
-	rm -f *.txt 
+	 
 	
 build: 
 	

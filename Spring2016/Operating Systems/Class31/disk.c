@@ -1,18 +1,109 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h> 
 
-#define DISK_NAME "DISK_0.txt"
-#define DISK_SIZE 40960
+// MACROS FOR DISK
+#define DISK_NAME "DISK_0"
+#define NUM_BLOCKS 1000
+#define BLOCK_SIZE 4096
+#define DISK_SIZE (NUM_BLOCKS * BLOCK_SIZE)
+
+// MACROS FOR iNODE
+#define MAX_FILE_NAME 1023
+#define MAX_OBJECTS 99
+
+// MACROS FOR file
+#define DATA_SIZE (4096 - 2)
+
+#define FILE 45
+#define FOLDER 54
 
 /*
 	Class 31: File System
 	Kevin Cao and Dhruvit Naik
 */
+
+
+// single iNode struct
+typedef struct 
+{
+	char type; 						// 1 byte
+	char name[MAX_FILE_NAME]; 		// 1023 byte 
+	int blocknum; 					// 2 bytes pointer to block number 
+} iNode;
+
+// iList
+iNode iList[MAX_OBJECTS];
+
+
+typedef struct 
+{
+	int nextBlock;
+	char data[DATA_SIZE];
+} file;
+
+typedef struct // 1025
+{
+	char name[MAX_FILE_NAME]; // 1023
+	int iNodeNum;			  // 2
+} dirNode;
+
+typedef struct 
+{
+	int parent; 			//2 bytes 
+	char dirNode[3]; // 4094 bytes 3 nodes max 
+} directory;
+
+
+typedef struct 
+{
+	int s[NUM_BLOCKS];
+	int top;
+} stack; 
+
+
+static char rBlock[4096];
+stack fBlocks;
+
+
+void push(int block)
+{
+	if(fBlocks.top == (NUM_BLOCKS-1))
+	{
+		// FULL
+		perror("Stack Full");
+		exit(EXIT_FAILURE); 
+	}
+	else
+	{
+		fBlocks.top = fBlocks.top + 1;
+		fBlocks.s[fBlocks.top] = block;
+	}
+	
+}
+
+int pop()
+{
+	int block;
+
+	if(fBlocks.top == -1)
+	{
+		perror("Stack Empty");
+		exit(EXIT_FAILURE); 
+	}
+	else
+	{
+		block = fBlocks.s[fBlocks.top];
+		fBlocks.top = fBlocks.top - 1;
+	}
+	return block;
+}
+
 
 
 /*
@@ -25,6 +116,7 @@
 
 	returns: file descriptor of disk
 */
+
 
 int openDisk(char *filename, int nbytes)
 {
@@ -42,7 +134,6 @@ int openDisk(char *filename, int nbytes)
 		perror("open failed");
 		exit(EXIT_FAILURE); 
 	}	
-		 
 	/*
 		given file's size will change to nbytes 
 	*/
@@ -101,8 +192,8 @@ int readBlock(int disk, int blocknum, void *block)
 	/*
 		write read results to stdout for debugging 
 	*/	
-	write(1, block, rd);
-	printf("\n");
+	//write(1, block, rd);
+	//printf("\n");
 	return rd; 
 }
 
@@ -153,6 +244,56 @@ int writeBlock(int disk, int blocknum, void *block)
 	return wr; 
 }
 
+void freeBlocks(int disk)
+{
+	// check all blocks 
+	int i; 
+	char check[4096] = {0};
+	for(i = 0; i<20; i++)
+	{
+		readBlock(disk,i,rBlock);
+		int Free = strcmp(rBlock,check);
+		if(Free == 0)
+		{
+			push(i);
+			//printf("Pushed-%d\n",i);
+		}
+	}
+}
+
+int parseBlock(char block[4096])
+{
+
+	//printf("%c\n",block[0] );
+	return 0;
+}
+
+int createiNode(int disk,int blocknum, char type, void *name)
+{
+	iNode node; 
+	memset(&node, 0, sizeof(node));
+	node.type = type;
+	strcpy(node.name,name);
+	printf("%s\n",node.name);
+	node.blocknum = 10;
+	writeBlock(disk, blocknum, &node);
+	return 0; 
+}
+
+int createFile(int disk,int blocknum, void *filename)
+{
+	createiNode(disk, blocknum, FILE, filename);
+
+	return 0;
+}
+
+int createFolder(int disk,int blocknum, void *foldername)
+{
+	createiNode(disk, blocknum, FOLDER, foldername);
+
+	return 0;
+}
+
 /*
 	syncDisk
 	----------------------------
@@ -169,118 +310,31 @@ void syncDisk()
 
 int main()
 {
+	fBlocks.top = -1;
 	int disk = 0;
-	int rd = 0;
-	int wr = 0;
-
-	/*
-		Open Disk
-	*/	
 
 	disk = openDisk(DISK_NAME, DISK_SIZE);
-	
-	/*
-		Read and Write Sequentially Into Disk 
-	*/	
-	char buf1[4096] = "BLOCK_ONE";
-	printf("writing block...\n");
-	wr = writeBlock(disk, 0, buf1);
-	printf("reading block...\n");
-	rd = readBlock(disk, 0, buf1);
-	
-	char buf2[4096] = "BLOCK_TWO";
-	printf("writing block...\n");
-	wr = writeBlock(disk, 1, buf2);
-	printf("reading block...\n");
-	rd = readBlock(disk, 1, buf2);
+	char buffer[4096] = "hello world";
+	writeBlock(disk, 0, buffer);
 
-	char buf3[4096] = "BLOCK_THREE";
-	printf("writing block...\n");
-	wr = writeBlock(disk, 2, buf3);
-	printf("reading block...\n");
-	rd = readBlock(disk, 2, buf3);
+	// readBlock
+	// read file static 
+	readBlock(disk, 0, rBlock);
+	//parseBlock(rBlock);
+	char buffer2[1023] = "987654321234567790";
+	createFile(disk, 0, &buffer2);
 
-	char buf4[4096] = "BLOCK_FOUR";
-	printf("writing block...\n");
-	wr = writeBlock(disk, 3, buf4);
-	printf("reading block...\n");
-	rd = readBlock(disk, 3, buf4);
+	// Create i node first then the file 
 
-	char buf5[4096] = "BLOCK_FIVE";
-	printf("writing block...\n");
-	wr = writeBlock(disk, 4, buf5);
-	printf("reading block...\n");
-	rd = readBlock(disk, 4, buf5);
-
-	char buf6[4096] = "BLOCK_SIX";
-	printf("writing block...\n");
-	wr = writeBlock(disk, 5, buf6);
-	printf("reading block...\n");
-	rd = readBlock(disk, 5, buf6);
-
-	/*
-		Update Disk with user input
-	*/	
-	printf("Update Disk\n");	
-	while(1)
-	{	
-		int i = 0;
-
-		printf("1)Write Blocks 1-5:\n");
-		printf("2)Read Blocks 1-5:\n");
-		printf("3)Exit:\n");
-		scanf("%d", &i);
-
-		if (i==3)
-			break;
+freeBlocks(disk);
 
 
-		if (i == 1)
-		{
-			while(1)
-			{
-				i = 0;
-				char buf[4096] = "";
-				printf("1-5)Choose what Block to write (1-5):\n");
-				printf("6)Back:\n");
-				scanf("%d", &i);
 
-				if (i==6)
-					break;
-
-				printf("Enter Data to write into Block %d:\n", i);
-				scanf("%4096s", buf);
-				wr = writeBlock(disk, i-1, buf);
-			}
-		}
-
-		if (i == 2)
-		{
-			while(1)
-			{
-				i = 0;
-				char buf[4096] = "";
-				printf("1-5)Choose what Block to read (1-5):\n");
-				printf("6)Back:\n");
-				scanf("%d", &i);
-
-				if (i==6)
-					break;
-
-				printf("-----Block %d Read", i);
-				rd = readBlock(disk, i-1, buf);
-			}
-
-
-		}
-
-	}	
-
-	syncDisk();
-	printf("Disk Closed\n");
 	close(disk);
     return 0;  
 }
+
+
 
 
 
