@@ -7,8 +7,8 @@ clean:
 	
 build: 
 	
-	gcc disk.c -o disk.out
+	gcc -o filesystem ext99.c disk.c
 	
 execute:
-	./disk.out
+	./filesystem
 	
