@@ -34,19 +34,40 @@
 */
 
 
-// single iNode struct
+/*
+    Inode Structure 
+    Contatins: 
+        type:           the type (file or folder)
+        numberBlocks:   number of datablocks it points to
+        blocks:         array of pointers to data blocks
+        name:           name of file
+*/
 typedef struct 
 {
-    char     type;                      // 1 byte
-    char     numberBlocks;               // 1 bytes pointer to block number
+    char     type;                          
+    char     numberBlocks;               
     int16_t  blocks[MAX_FILE_SIZE];
-    char     name[MAX_FILE_NAME];       // 1023 byte 
+    char     name[MAX_FILE_NAME];       
 } iNode;
+
+/*
+    File Structure 
+    Contatins: 
+        data:           file data
+*/
 
 typedef struct 
 {
     char data[DATA_SIZE];
 } file;
+
+/*
+    Directory Structure 
+    Contatins: 
+        parent:           points to parent's inode
+        numberElements:   the number of elements in directory
+        nodes:            array of elements' inode
+*/
 
 typedef struct 
 {
@@ -55,14 +76,32 @@ typedef struct
     unsigned char nodes[4000];        //iNodeNum
 } directory;
 
+
+/*
+    Boot Block 
+    Contatins: 
+        init:               check for disk has been initilized 
+        bTop:               stack pointer for data blocks
+        iTop:               stack pointer for inode blocks 
+        fblock:             stack of free data blocks 
+        finode:             stack of free inodes
+*/
+
 typedef struct 
 {
     char init; 
     int16_t bTop;            
     int16_t iTop; 
+    int16_t fblock[900];
+    int16_t finode[100];
 } boot;
 
-
+/*
+    Stack  
+    Contatins: 
+        s:              stack elements
+        top:            pointer to the top
+*/
 typedef struct 
 {
     int s[NUM_BLOCKS];
@@ -70,13 +109,24 @@ typedef struct
 } stack; 
 
 
+/* used to store data read */
 static char rBlock[4096];
+/* holds current inode # of directory */
 static int currentDir;
-static int previousDir;
 
+/* free data block stack */
 stack fBlocks;
+/* free inode block stack */
 stack fINodes;
 
+/*
+    push
+    ----------------------------
+    push element on stack
+
+    block: element to push
+    Stack: which stack
+*/
 void push(int block, int Stack)
 {
 
@@ -116,7 +166,14 @@ void push(int block, int Stack)
         exit(EXIT_FAILURE);
     }
 }
+/*
+    pop
+    ----------------------------
+    pop element on stack
 
+    block: element to pop
+    Stack: which stack
+*/
 int pop(int Stack)
 {
     int block;
@@ -158,17 +215,48 @@ int pop(int Stack)
     }
 }
 
-// Checks the Boot Block to check if initilized, if not it will 
-// Gets the stack pointers from the boot block as well
 
+/*
+    displayInodeStack
+    ----------------------------
+    Displays the Free Inodes
+*/
+
+void displayInodeStack()
+{
+    int i;
+    printf ("\n The status of the stack is \n");
+    for (i = fINodes.top; i >= 50; i--)
+    {   
+        printf ("i:%d -> ", i);
+        printf ("%d\n", fINodes.s[i]);
+    }
+    
+    printf("\n");
+}
+
+/*
+    bootBlock
+    ----------------------------
+    reads boot block 
+    - updates stacks and stack pointer 
+    - if disk is opened for the first time
+        it will populate stacks 
+
+    disk: fd of open disk
+
+    returns: if first opened or not
+*/
 int bootBlock(int disk)
 {
     readBlock(disk,0, rBlock);
     unsigned char init = rBlock[0];
-    printf("%hhu\n", init);
-    if(init == 0xFF)    //Disk has been initilized 
+    /* Disk has been already initilized */
+    if(init == 0xFF)
     {
-        printf("booting up disk......\n");
+        printf("booting up disk...........................\n");
+
+        /* this is to get two bytes into a 16bit integer value */
         unsigned char msb;
         unsigned char lsb;
         msb = rBlock[3];
@@ -176,34 +264,61 @@ int bootBlock(int disk)
         printf("rBlock2: %hhu\n", msb);
         printf("rBlock1: %hhu\n", lsb);
         fBlocks.top = (msb << 8) | lsb;
-        printf("STACK POINTER DATA BLOCKS: %d\n", fBlocks.top);
+        printf("STACK POINTER DATA: %d\n", fBlocks.top);
         msb = rBlock[5];
         lsb = rBlock[4];
         fINodes.top = (msb << 8) | lsb;
-        printf("STACK POINTER Inode BLOCKS: %d\n", fINodes.top);
+        printf("STACK POINTER - Inode: %d\n", fINodes.top);
+
+        int i;
+        int m_idx = 7;
+        int l_idx = 6;
+        printf("GETTING DATA STACK\n");
+        for (i = 0; i < 900; i++)
+        {
+            msb = rBlock[m_idx];
+            lsb = rBlock[l_idx];
+            fBlocks.s[i] = (msb << 8) | lsb;
+            //printf("BOOTING DATA %d\n", fBlocks.s[i]);
+            m_idx = m_idx + 2;
+            l_idx = l_idx + 2; 
+        }
+        printf("GETTING INODE STACK\n");
+        for (i = 0; i < 100; i++)
+        {   
+            msb = rBlock[m_idx];
+            lsb = rBlock[l_idx];
+            fINodes.s[i] = (msb << 8) | lsb;
+            m_idx = m_idx + 2;
+            l_idx = l_idx + 2; 
+            //printf("BOOTING IndoeBLCOK %d\n", fINodes.s[i]);
+        }
         return 0;
     }
+    /* Setting up disk for the 1st time */
     else
     {
-        printf("initilizing disk......\n");
+        printf("initilizing disk...........................\n");
         boot b = {0};
         b.init = 0xFF;
         fBlocks.top = -1;
         fINodes.top = -1;
         b.bTop = fBlocks.top;
         b.iTop = fINodes.top;
-        printf("disk initilized......\n");
+        printf("disk initilized...........................\n");
         writeBlock(disk,0,&b);
-
         return 1;
     }
 }
 
-// Checks all blocks to check if free
-
+/*
+    freeBlocks
+    ----------------------------
+    populates data stacks of free blocks
+    disk: fd of open disk
+*/
 void freeBlocks(int disk)
 {
-    // check all blocks 
     int i; 
     char check[4096] = {0};
     for(i = MAX_INODES; i<NUM_BLOCKS; i++)
@@ -213,15 +328,18 @@ void freeBlocks(int disk)
         if(Free == 0)
         {
             push(i,BLOCK_STACK);
-            //printf("Pushed-%d\n",i);
         }
     }
 }
 
-
+/*
+    freeINodes
+    ----------------------------
+    populates inode stacks of free blocks
+    disk: fd of open disk
+*/
 void freeINodes(int disk)
 {
-    // check all blocks 
     int i; 
     char check[4096] = {0};
     for(i = 0; i<MAX_INODES; i++)
@@ -231,35 +349,62 @@ void freeINodes(int disk)
         if(Free == 0)
         {
             push(i,INODE_STACK);
-            //printf("Pushed-%d\n",i);
         }
     }
 }
 
 
-// Closes disk, and saves stack pointers when opened next
+/*
+    hibernate
+    ----------------------------
+    saves the current status of stacks and pointers 
+        to the boot block
+    and closes the disk
+    disk: fd of open disk
+*/
 
 void hibernate(int disk)
 {
-    printf("hibernating disk......\n");
+    printf("hibernating disk...........................\n");
 
     //freeBlocks(disk);
     //freeINodes(disk);
 
+    // int16_t fblock[NUM_BLOCKS];
+    // int16_t finode[MAX_INODES];
+    int i;
     boot b = {0};
     b.init = 0xFF;
     b.bTop = fBlocks.top;
     b.iTop = fINodes.top;
-            printf("CLOSING STACK POINTER DATA BLOCKS: %d\n", fBlocks.top);
-        
-        printf("CLosing STACK POINTER Inode BLOCKS: %d\n", fINodes.top);
+    printf("CLOSING STACK POINTER DATA: %d\n", fBlocks.top);
+    printf("CLOSING STACK POINTER INODE: %d\n", fINodes.top);
+    printf("SAVING STACK\n");
+    for (i = 0; i < 900; i++)
+    {
+        b.fblock[i] = fBlocks.s[i];
+    }
+    for (i = 0; i < 100; i++)
+    {
+        //printf("stack  %d\n", fINodes.s[i]);
+        b.finode[i] = fINodes.s[i];
+    }
+    printf("disk closed...........................\n");
     writeBlock(disk, 0, &b);
     syncDisk();
     close(disk);
 }
 
+
 /*
+    getInode
+    ----------------------------
     returns Inode struct for given inode block number 
+
+    disk: fd of open disk
+    inode: pointer to inode block
+
+    return: inode structure 
 */
 
 iNode getInode (int disk, int inode)
@@ -270,14 +415,14 @@ iNode getInode (int disk, int inode)
     char name[MAX_FILE_NAME] = {0};
     int c;
     readBlock(disk, inode, rBlock);
-
+    /* reads data from disk and places into structure for easy use */
     i.type = rBlock[0];
     i.numberBlocks = rBlock[1];
     int m_idx = 3;
     int l_idx = 2;
     for (c = 0; c < MAX_FILE_SIZE; c++)
     {   
-        
+        /* this is to get two bytes into a 16bit integer value */
         msb = rBlock[m_idx];
         lsb = rBlock[l_idx];
         i.blocks[c] = (msb << 8) | lsb;
@@ -290,18 +435,20 @@ iNode getInode (int disk, int inode)
         name[c] = rBlock[c+22];
     }
     strcpy(i.name, name);
-    // printf("INODE| Name: %s\n",name);
-    // printf("INODE| Number of Blocks: %hhu\n",i.numberBlocks);
-    // printf("INODE| block-0: %d\n",i.blocks[0]);
-    // printf("INODE| block-1: %d\n",i.blocks[1]);
-    // printf("INODE| block-2: %d\n",i.blocks[2]);
-    // printf("INODE| block-3: %d\n",i.blocks[3]);
-    // printf("INODE| block-4: %d\n",i.blocks[4]);
     return i;
 }
 
 
-// returns directory struct for given directory inode number
+/*
+    parseDirectory
+    ----------------------------
+    returns directory struct for given directory inode number
+
+    disk: fd of open disk
+    inode: pointer to inode block
+
+    return: directory structure 
+*/
 
 directory parseDirectory(int disk, int dir) 
 {   
@@ -311,6 +458,7 @@ directory parseDirectory(int disk, int dir)
     // Assuming that Directory will only hold 1 data block
     int dblock = i.blocks[0];
     readBlock(disk, dblock, rBlock);
+    /* reads data from disk and places into structure for easy use */
     char parent = rBlock[0];
     d.parent = parent;
     char numberElements = rBlock[1]; 
@@ -323,22 +471,35 @@ directory parseDirectory(int disk, int dir)
     return d;
 }
 
+/*
+    updateDirectory
+    ----------------------------
+    updates directory when folder or file is created
 
-// updates directory when folder or file is created 
-
-int updateDirectory(int disk, int iBlock)
+    disk: fd of open disk
+    iBlock: pointer to inode block of new folder or file
+*/
+void updateDirectory(int disk, int iBlock)
 {
     directory d = parseDirectory(disk, currentDir);
     d.nodes[d.numberElements] = iBlock;
     d.numberElements++;
     iNode i = getInode(disk, currentDir);
+    printf("Number of Elements in Directory %d\n",d.numberElements);
     writeBlock(disk, i.blocks[0], &d);
-    return 0;
+    syncDisk();
 }
 
+/*
+    createiNode
+    ----------------------------
+    creates an iNode for new file/folder
 
-// Creates inode when user wants to create a folder or file
-
+    disk: fd of open disk
+    type: is it a folder or file
+    name: name of the new element
+    returns: the data block the iNode points to 
+*/
 int createiNode(int disk, char type, void *name)
 {
     iNode node = {0}; 
@@ -350,35 +511,58 @@ int createiNode(int disk, char type, void *name)
     memset(node.blocks, 0x0 , sizeof(node.blocks));
     node.blocks[0] = dBlock; 
     writeBlock(disk, iBlock, &node);
+    syncDisk();
     updateDirectory(disk, iBlock);
     return dBlock; 
 }
 
-// create a empty file 
+/*
+    createFile
+    ----------------------------
+    creates a empty File
 
-int createFile(int disk, void *filename)
+    disk: fd of open disk
+    filename: name of file
+*/
+
+void createFile(int disk, void *filename)
 {
     int datablock = createiNode(disk, FILE, filename);
     char initBuffer[4096];
     memset(initBuffer, 0x0 , sizeof(initBuffer));
     writeBlock(disk, datablock, initBuffer);
+    syncDisk();
     //printf("File Data Location%d\n",datablock );
-    return 0;
 }
 
+/*
+    createFile
+    ----------------------------
+    creates a folder, links it with the parent folder
 
-// create a empty folder
-int createFolder(int disk, void *foldername)
+    disk: fd of open disk
+    filename: name of file
+*/
+
+void createFolder(int disk, void *foldername)
 {
     int datablock = createiNode(disk, FOLDER, foldername);
-    char initBuffer[4096] = {0};
-    memset(initBuffer, 0x0 , sizeof(initBuffer));
-    writeBlock(disk, datablock, initBuffer);
-    return 0;
+    directory d = {0};
+    d.parent = currentDir;
+    d.numberElements = 0;
+    memset(d.nodes, 0x00, sizeof(d.nodes));
+    writeBlock(disk, datablock, &d);
+    syncDisk();
 }
 
+/*
+    createRoot
+    ----------------------------
+    creates a root directory for a fresh disk
 
-// creates root directory for a fresh disk 
+    disk: fd of open disk
+    name: ROOT 
+*/
 int createRoot(int disk, void *name)
 {
     // Create iNode For Root
@@ -391,45 +575,163 @@ int createRoot(int disk, void *name)
     strcpy(node.name,name);
     int iBlock = ROOT;
     writeBlock(disk, ROOT, &node);
+    syncDisk();
     // Create Data for ROOT
     directory root = {0};
     root.parent = ROOT;
     root.numberElements = 0;
     memset(root.nodes, 0x00, sizeof(root.nodes));
     writeBlock(disk, node.blocks[0], &root);
+    syncDisk();
     return iBlock;
 }
 
-// ls
+/*
+    delete
+    ----------------------------
+    deletes a file or folder,
+    folders need to be empty before deletion 
 
+    disk: fd of open disk
+    name: file to be deleted  
+*/
+int delete(int disk, void *name)
+{
+    directory d = parseDirectory(disk, currentDir);
+    int listings[d.numberElements];
+    int c;
+    //printf("Number of elements before delete: %d \n", d.numberElements);
+    for(c = 0; c < d.numberElements; c++)
+    {
+        iNode i = getInode(disk, d.nodes[c]);
+        if(strcmp(i.name, name) == 0)
+            {   
+                if(i.type == FOLDER)
+                {
+                    directory deleteDir = parseDirectory(disk, d.nodes[c]);
+                        if(deleteDir.numberElements != 0)
+                        {
+                            printf("Delete Files/Folders in Directory before Deleting: %d", deleteDir.numberElements);
+                            return 0;
+                        }
+                    printf("Deleting Folder.............\n");
+                    printf("Clearing Folder Data Block: %d\n", i.blocks[0]);
+
+                    char initBuffer[4096];
+                    memset(initBuffer, 0x0 , sizeof(initBuffer));
+                    writeBlock(disk, i.blocks[0], initBuffer);
+                    push(i.blocks[0],BLOCK_STACK);
+                    printf("Clearing Folder Inode: %d\n", d.nodes[c]);
+                    writeBlock(disk, d.nodes[c], initBuffer);
+                    push(d.nodes[c],INODE_STACK);
+                    syncDisk();
+                    int k;
+                    /* compacting elements in array after deletion, fill in empty space*/
+                    for (int k = c; k < d.numberElements; k++) 
+                    {   
+                        d.nodes[k]= d.nodes[k+1];
+                    }
+                    d.numberElements--;
+                    iNode Idir = getInode(disk, currentDir);
+                    printf("Saving Changes in %s\n", Idir.name);
+                    // printf("Saving AFter delete elements in %d\n", d.numberElements);
+                    // printf("Saving AFter delete node 0 in %d\n", d.nodes[0]);
+                    // printf("Saving AFter delete node 1 in %d\n", d.nodes[1]);
+                    // printf("Saving AFter delete node 2 in %d\n", d.nodes[2]);
+                    writeBlock(disk, Idir.blocks[0], &d);
+                    syncDisk();
+                }
+                else
+                {
+                    printf("Deleting File.............\n");
+                    int j;
+                    char initBuffer[4096];
+                    memset(initBuffer, 0x0 , sizeof(initBuffer));
+
+                    for(j=0; j<i.numberBlocks; j++)
+                    {
+                        printf("Clearing File Data Blocks: %d\n", i.blocks[j]);
+                        // We dont have to clear becuase it gets cleared when creating, only push
+                        writeBlock(disk, i.blocks[j], initBuffer);
+                        push(i.blocks[j],BLOCK_STACK);
+                    }    
+
+                    printf("Clearing File Inode: %d\n", d.nodes[c]);
+                    writeBlock(disk, d.nodes[c], initBuffer);
+                    push(d.nodes[c],INODE_STACK);
+                    syncDisk();
+                    /* compacting elements in array after deletion, fill in empty space*/
+                    int k;
+                    for (int k = c; k < d.numberElements; k++) 
+                    {   
+                        d.nodes[k]= d.nodes[k+1];
+                    }
+                    d.numberElements--;
+                    iNode Idir = getInode(disk, currentDir);
+                    printf("Saving Changes in %s\n", Idir.name);
+                    // printf("Saving AFter delete elements in %d\n", d.numberElements);
+                    // printf("Saving AFter delete node 0 in %d\n", d.nodes[0]);
+                    // printf("Saving AFter delete node 1 in %d\n", d.nodes[1]);
+                    // printf("Saving AFter delete node 2 in %d\n", d.nodes[2]);
+                    writeBlock(disk, Idir.blocks[0], &d);
+                    syncDisk();
+                }
+            }
+        }
+    return -1;
+}
+
+/*
+    listDirectory
+    ----------------------------
+    lists the current directory contents  
+
+    disk: fd of open disk
+*/
 int listDirectory(int disk)
 {
     directory d = parseDirectory(disk, currentDir);
-
     int listings[d.numberElements];
     int c;
     for (c = 0; c < d.numberElements; c++)
     {
-        printf("List directory Inode--%hhu\n", d.nodes[c]);
+        //printf("List directory Inode--%hhu\n", d.nodes[c]);
         iNode i = getInode(disk, d.nodes[c]);
-        if(i.type == FOLDER)
-            printf("List directory Folder Name--%s\n", i.name);
-        else
-            printf("List directory File Name--%s\n", i.name);
-    }
 
-    printf("LISTING Directory\n");
+        if(i.type == FOLDER)
+        {
+            printf("Inode: %hhu..", d.nodes[c]);
+            printf("Folder Name -- %s\n", i.name);
+        }
+        else
+        {
+            printf("Inode: %hhu..", d.nodes[c]);
+            printf("File Name -- %s\n", i.name);
+        }
+    }
     return 0;
 }
 
 
-// cd
+/*
+    changeDirectory
+    ----------------------------
+    change directory, traverse tree 
+    use ".." to go back a directory
+
+    disk: fd of open disk
+    name: directory to move to
+*/
 int changeDirectory(int disk, void *name)
 {
 
-
-
     directory d = parseDirectory(disk, currentDir);
+    if (strcmp("..", name)==0)
+    {
+        currentDir = d.parent;
+        printf("Going Back to Directory: %d\n", currentDir);
+        return 1;
+    }
 
     int listings[d.numberElements];
     int c;
@@ -441,9 +743,9 @@ int changeDirectory(int disk, void *name)
         {
             if(strcmp(i.name, name) == 0)
             {
-                previousDir = currentDir;
+                
                 currentDir = d.nodes[c];
-                printf("Match\n");
+                printf("Going up to Directory: %d\n", currentDir);
                 return 1;
             }
         }
@@ -453,8 +755,16 @@ int changeDirectory(int disk, void *name)
     return -1;
 }
 
-// open file for reading and writing 
+/*
+    openFile
+    ----------------------------
+    open a file
 
+    disk: fd of open disk
+    name: directory to move to
+
+    return: the file descriptor of open file (iNode number)
+*/
 int openFile(int disk, void *name)
 {
     directory d = parseDirectory(disk, currentDir);
@@ -468,7 +778,7 @@ int openFile(int disk, void *name)
         {
             if(strcmp(i.name, name) == 0)
             {
-                printf("Match\n");
+                printf("opening file: %s\n", i.name);
                 return d.nodes[c];
             }
         }
@@ -477,10 +787,18 @@ int openFile(int disk, void *name)
 }
 
 
+/*
+    appendFile
+    ----------------------------
+    util for writeFile function, adds a data block to a file
+        - everytime you want to write into a 
+        file a new fresh data block is created 
+        - max file is 5 blocks
+    disk: fd of open disk
+    ofile: open file
 
-// util for write file 
-// everytime you want to write into a file a new fresh data block is created 
-// max file is 5 blocks
+    return: new data block for file
+*/
 
 int appendFile(int disk, int ofile)
 {
@@ -495,8 +813,14 @@ int appendFile(int disk, int ofile)
     return dBlock;
 }
 
-// read the file
+/*
+    readFile
+    ----------------------------
+    reads all the datablocks of a file
 
+    disk: fd of open disk
+    ofile: open file
+*/
 void readFile(int disk, int ofile)
 {
     iNode i = getInode(disk,ofile);
@@ -513,40 +837,19 @@ void readFile(int disk, int ofile)
     printf("\n");
 }
 
-// write into file
+/*
+    writeFile
+    ----------------------------
+    write into a file, user input
 
+    disk: fd of open disk
+    ofile: open file
+*/
 void writeFile(int disk, int ofile)
 {
     iNode i = getInode(disk,ofile);
     int b = i.numberBlocks;
     int c;
-    //printf("Write in File Block: %d\n", b);
-    // if(b == 1)
-    // {
-    //     char buf[4096] = "";
-    //     printf("Write Data1st: \n");
-    //     scanf("%4096s", buf);
-    //     writeBlock(disk, i.blocks[0], buf);
-    //     b++;
-    //     i.numberBlocks = b; 
-    //     writeBlock(disk, ofile, &i);
-    //     printf("WRITE AND READ INODE--WRITE\n");
-    //     getInode(disk,ofile);
-    // }
-    // else
-    // {
-    // if(b != 1)
-    // {
-    //     printf("Data:");
-    //     for (c = 0; c <(b-1); c++)
-    //     {   
-    //         //printf("Read From Block: %d\n", i.blocks[c]);
-    //         readBlock(disk, i.blocks[c], rBlock);
-    //         printf("%s ",rBlock);
-    //        // readFile();
-    //     }
-    //     printf("\n");
-    // }
         char buf[4096] = "";
         printf("Write Data: \n");
         scanf("%4096s", buf);
@@ -557,15 +860,13 @@ void writeFile(int disk, int ofile)
         int dBlock = appendFile(disk, ofile);
     
 
-
-    // readBlock(disk, i, rBlock);
-    // readData();
-    // char buf[4096] = "";
-    // scanf("%s",buf);
-    // writeBlock(disk, i.datablock, buf);
-
 }
 
+/*
+    main
+    ----------------------------
+    interactive disk program
+*/
 int main()
 {
 
@@ -587,25 +888,14 @@ int main()
     {
         currentDir = ROOT;
     }
-    // getInode(disk, currentDir);
-    // char buf[1024]= "File1";
-    // createFile(disk,buf);
-
-    // int ofile = openFile(disk, "File1");
-    // printf("OFILE: %d\n", ofile);
-    // for (int i = 0; i < 3; ++i)
-    // {
-    //     writeFile(disk, ofile);
-    //     // syncDisk();
-    // }
 
     while(1)
      {
        int i = 0;
-       printf("commands:1)ls, 2)cd, 3)vi 4)mk, 5)mkdir, 6)close\n");
+       printf("commands:1)ls, 2)cd, 3)vi 4)mk, 5)mkdir, 6)rm 7)close 8)Inode stack\n");
        scanf("%d", &i);
        
-       if(i==6)
+       if(i==7)
 	       break;
 
        if(i==1)
@@ -615,7 +905,7 @@ int main()
        else if(i==2)
 	 {
 	   char buf[1024]= "";
-	   printf("Enter Name");
+	   printf("Enter Name\n");
 	   scanf("%1024s",buf);
 	   changeDirectory(disk,buf);
 	   
@@ -623,7 +913,7 @@ int main()
         else if(i==3)
      {
        char buf[1024]= "";
-       printf("Enter Name");
+       printf("Enter Name\n");
        scanf("%1024s",buf);
        int ofile = openFile(disk, buf);
 
@@ -648,7 +938,7 @@ int main()
        else if(i==4)
 	 {
 	   char buf[1024]= "";
-	   printf("Enter Name");
+	   printf("Enter Name\n");
 	   scanf("%1024s",buf);
 	   createFile(disk,buf);
 	   
@@ -656,11 +946,21 @@ int main()
        else if(i==5)
 	 {
 	   char buf[1024]= "";
-	   printf("Enter Name");
+	   printf("Enter Name\n");
 	   scanf("%1024s",buf);
 	   createFolder(disk,buf);
 	   
 	 }
+        else if(i==6)
+     {
+       char buf[1024]= "";
+       printf("Enter Name\n");
+       scanf("%1024s",buf);
+       delete(disk,buf);
+       
+     }
+    else if(i==8)
+        displayInodeStack();
         else
         {
             printf("Invalid\n");
